@@ -3,21 +3,34 @@
 - The posterior probability of a parameter can be concentrated around 0
 - The joint posterior distribution of all parameters could model the uncertainty about which edges to include
 - ... But it's not nice with convex likelihoods/priors because it cannot assign high/low probabilities to dis-par combinations of parameters
+*** Discussion
+- Not prior probability that the parameter is not in the model
+- Ratio prior/posterior
 ** BDGraph approach
 - You said :: Pencer et al (finis) ~ pseudo-likelihood that allows to analytically define the Marginal likelihood
 - Specific conjugate prior that allows for an approximation of ratio of normalization constants
 - The bottleneck was the normalization constants of the inverse-gamma's
+*** Discussion
+- Impact of priors on the BF
+  - Then the assumptions for simplifications have a big effect
+- Maybe use different priors during search than during testing
 ** Using likelihood ratios
 - Using LR as estimates of evidence
   - ~upper bound of the posterior
 - If we assign the same prior probability to all models
 - *And* we use the same priors for the parameters of the models and they are iid
   - But I assume the joint priors don't work this way once we specify them with different dimensions
+*** Discussion
+- BF is the posterior expectation of the LR
+  - If nested models
 ** Prior information in which prior
 - We can incorporate prior information in the prior distribution over parameters
 - Or on the prior distribution over models
 - How do they interact?
 - Does it make sense to penalize complexity with the priors or let just the model search algorithm deal with it?
+*** Discussion
+- Makes sense to have priors with high probability to sparse and dense models, but not in the middle
+- Some are analytical
 * Steps
 ** Contributions to the Julia ecosystem
 - I think it's a good idea for me to build a small portfolio of open source stuff during the thesis
@@ -67,18 +80,19 @@
   - Ideally something that can be done sequentially and re-use 
 ** Models
 - Linear / logistic as proofs of concept
-  - Nice analytical marginals for logistic?
-- Ising, GGM
-  - I have no experience with estimating ISINGs (apart from node-wise)
+  - Logistic is not analytical
+- GGM easy but analytical
+- Ising
 ** Benchmark 
 *** Across multiple models
 *** Between approximations / calculations of the marginal likelihoods
 *** Against alternatives
+- Focus on whether the approach does work/no
 **** BAS
 - Still needs analytical marginals
 - Only implemented for GLMs
 **** BDGraph seems to be the state of the art
-- Only implemented for GGMs
+- .. or not
 ** Thoughts
 - The literature on/using Occam's window is not large
   - Same authors: Raftery & Madigan
@@ -106,3 +120,12 @@
   - Nice amount of time for buffer + feedback + peer reviews
 
 * Data collection
+* Use the different priors stuff
+* Re-read laplace stuff
+- His proffered
+- Iterative Laplace or approximation Pensar prios
+
+* GGM marginal 
+- From GGM
+
+* Friday 11:00
