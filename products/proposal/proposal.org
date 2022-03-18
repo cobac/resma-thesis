@@ -1,0 +1,290 @@
+#+title: Form 2A - Research Master's Psychology: Thesis Research Proposal
+#+date:
+#+author: 
+
+#+BEGIN_SRC elisp :eval :results none :exports results
+  (coba-define-org-tex-template)
+  (setq custom-tex-template (mapconcat 'identity (list
+                                                  org-tex-report-template
+                                                  org-tex-math-template
+                                                  org-tex-graphix-template                                                  
+                                                  ) "\n"))
+(coba-define-org-tex-template)
+#+END_SRC
+
+#+LATEX_HEADER: \usepackage{lipsum}
+
+#+LATEX_CLASS_OPTIONS: [12pt]
+#+LATEX_HEADER: \setlength{\parskip}{\baselineskip}%
+#+LATEX_HEADER: \setlength{\parindent}{4pt}
+
+#+LATEX_HEADER: \defbibheading{bibliography}[7. References]{%
+#+LATEX_HEADER: \section*{#1}}
+
+# #+LATEX_HEADER: \title{\textbf{Research Proposal \\
+# #+LATEX_HEADER:  Occam's Window something something}}
+# #+LATEX_HEADER: \affiliation{UvA}
+
+#+LATEX_HEADER: \usepackage{fancyhdr}
+#+LATEX_HEADER: \setlength{\headsep}{2.25\parskip}
+
+# #+LATEX_HEADER: \shorttitle{Occam's Window something}
+#+LATEX_HEADER: \usepackage{fancyhdr}
+#+LATEX_HEADER: \pagestyle{fancy}
+#+LATEX_HEADER: \fancyhf{}
+#+LATEX_HEADER: \renewcommand{\headrulewidth}{0pt}
+# #+LATEX_HEADER: \setlength\headheight{80.0pt}
+# #+LATEX_HEADER: \addtolength{\textheight}{-80.0pt}
+#+LATEX_HEADER: \lhead{\includegraphics[width = .40 \textwidth]{uvalogo.pdf}}
+#+LATEX_HEADER: \rhead{Graduate School of Psychology}
+
+\thispagestyle{fancy}
+
+\raggedright
+* 1. General Information
+** 1.1 Student information 
+- Student name: :: David Coba
+- Student Id card number: :: 12439665
+- Address: :: -
+- Postal code and residence: :: -
+- Telephone number: :: -
+- Email address: :: coba@cobac.eu
+- Major: :: Psychological methods
+  \newpage
+** 1.2 Supervisor information
+- Supervisor name: :: Maarten Marsman
+- Second assesor name: :: Jonas Haslbeck
+- Specialization: :: Psychological Methods
+** 1.3 Other information
+- Date: :: 1.04.2022
+- Status: :: First draft
+- Number of ECs for the thesis: :: 32EC
+- Ethics Review Board (ERB) code: :: -
+  
+* 2. Title and Summary of the Research Project
+** 2.1 Title: Occam's window something something
+** 2.2 Summary of proposal 
+\lipsum[1]
+
+\hfill Word count: /150
+
+* 3. Project description 
+# (1200 w)
+# Describe prior research, a comprehensible literature review of the research field, converging upon the  research questions. 
+# a) Describe the state of affairs, including the theoretical framework, in the current research field based on the existing body of literature.
+# b) Clarify how the previous research eventuates into the research questions of the current proposal.
+
+- Introductory paragraph with goals
+  - Check if Occam's window works / is useful in general terms.
+  - Benchmark how it performs under different conditions against different alternatives.
+  - Simple models + graphical models
+  - Contribute software
+
+** 3.1 Prior research
+*** Single model inference vs Multiple model
+- Single model bad, ignores uncertainty of the model selection process
+
+*** Big encompassing model vs combination of multiple models
+- Computational feasibility of sampling across sub-models
+  - e.g. RJMCMC, MC^3
+  - Stability issues, with either similar models and/or not massive samples
+  - Relevance for current issues with graphical models
+- Combination of multiple models allows to separate the two steps, model search + combination
+
+\begin{equation*}
+\label{}
+p(\Delta | D) = \sum_{k}^{} p(\Delta| \mathcal{M}_k, D) w_k, \; \exists k : M_k \in \mathcal A
+\end{equation*}
+
+- \(\mathcal A\) is the set of considered models
+
+*** Occam's window as a model search algorithm before combination of multiple models
+- Depends on marginal likelihoods
+- Explain algorithm
+  - Only models that predict reasonably (relatively) well + Occam's razor
+
+  - Set of considered models
+    - They use \(p(M | D)\) instead of just the marginal likelihood \(p(D | M)\) to incorporate prior information about how likely each model is
+    
+\begin{equation*}
+\label{}
+\mathcal A' = \left \{ M_k : \frac{\max \{p(M_l | D)\}}{p(M _k | D)} \leq c\right  \}
+\end{equation*}
+
+- They also discard models that have submodels which have higher posterior probability
+
+\begin{equation*}
+\label{}
+\mathcal B = \left\{ M_k : \exists M_l \in \mathcal A',
+ M_l \subset M_k,
+\frac{p(M_l | D)}{p(M_k | D)} > 1
+ \right\} 
+\end{equation*}
+
+ - The set of considered models is \(\mathcal A = \mathcal A' \setminus \mathcal B\)
+
+- Greedy search with posterior model probabilities
+- \(M_0 \subset M_1\), they differ by only 1 edge
+- If \(M_0\) is rejected, all submodels of \(M_0\) are also rejected
+  - A model is submodel of another if all the edges in the first one are included in the second one
+    
+- Full algorithm as an appendix
+
+*** BMA vs stacking
+ - Two methods of Bayesian model combination
+
+ - BMA uses the posterior probability of models as weights, dependent on the marginal likelihoods / BFs
+
+\begin{equation*}
+\label{}
+p(\Delta | D) = \sum_{k=1}^{K} p(\Delta| \mathcal{M}_k, D) p(\mathcal{M}_k | D)
+\end{equation*}
+
+\begin{equation*}
+\label{}
+p(\mathcal M _k | D) = \frac{p(D | \mathcal  M_k) p(\mathcal M_k)}{\sum_{l=1}^{K} p(D| \mathcal M_l) p(\mathcal M_l)}
+\end{equation*}
+
+\begin{equation*}
+\label{}
+p(D | \mathcal M_k) = \int_{}^{} p(D | \theta_k, \mathcal M_k) p(\theta_k | \mathcal M_k) d\theta_k
+\end{equation*}
+
+- Stacking minimizes an utility function (LOOCV) to assign weights to models
+  - Common for point predictions, yao2018bayesianstacking extends it to whole posterior distributions
+  - Fancy way that reuses sampling draws and includes uncertainty about LOOCV estimates
+
+  - The main practical difference is that if the data-generating model is not in \(\mathcal A\), BMA will select the single model that minimizes the KL divergence while stacking will select the combination of models that minimize the (log posterior predictive) loss.
+    - Different asymptotic behavior
+    - Occam's window was conceived with BMA as the combination step
+      - You need BFs for both
+      - Stacking estimation of weights re-uses model estimation samples
+  - Same discussion as BF/marginal approach vs posterior predictive based approaches
+    - BFs /untrained/ models vs ppd-based trained models
+- Mention the pseudo-BMA approximations that use estimations of the posterior model probabilities
+- Full comparison between models is out of the scope of the proposal, rooted on differences in philosophical positions and scientific goals.
+
+- In this case our ultimate scientific goals are about the conditional dependencies structures in the data, inclusion/exclusion which edges
+- BMA more sensible to the models that are considered than stacking
+- No-one believs that a GGM or an ISING model are the data generating process
+- We are going to make trade-offs during the model search phase between computational feasibility and exactness
+- Stacking more robust option for model combination (?)
+  - Although posterior distribution of parameters might be wonky, we were planing on using the sum of weights (posterior model probabilities in BMA) of the models that include a particular parameter
+
+*** Other alternatives in the literature
+- BAS
+  - Sample without replacement from the space of models
+  - Choose an initial approximation for the marginals
+  - Update those approximations with the actual marginal likelihoods of the already-sampled models
+  - Still require analytical calculations of marginals
+- BDgraph
+  - For graphical models,
+    - Pseudolikelihood
+  - Birth-death MJMJ as an alternative to RJMCMC, the sampler explores the space of models
+    - Higher acceptance rates, poisson/exponential modeling
+  - Fast analytical approximations to avoid having to sample from the distributions of parameters
+    - Trade-offs
+
+*** Approximations to the marginal likelihood during model search
+- BIC
+  - Can be approximated with the BIC if we assume an unit information prior
+    - It could be more conservative and favor simpler models
+    - The log-marginal likelihood can be approximated as \(\log f \left( x | M_i \right) \approx \mathcal{L}(\widehat \theta) - \frac{1}{2} \text{dim}(\theta) \log n\)
+    - \(2 \log B_{ij} = - \text{BIC}(M_i) + \text{BIC}(M_j)\)
+- Laplace
+- BDgraph approximation
+- Occam's window algorithm shines computationally if there is a way of re-using computations and update marginals sequentially
+
+
+- The approximations to the marginal during model search don't have to be used during model averaging
+
+** 3.2 Key questions
+# Now state the key questions, the essence of the proposal. Here, the intended research should be connected to prior research. Testable research model/ expectations/ hypotheses should be derived from the key question, and the relation between theory and research hypotheses should be clearly specified.
+# a) Formulate a general relevant research question based on previous research.
+# b) Translate the general research question in a clear manner into a specific research question.
+# c) Translate the specific research questions into testable research model/ expectations/ hypotheses.
+
+- Same as in the introduction.
+
+\hfill Word count: /1200
+
+* 4. Procedure 
+# (1000 w)
+
+** 4.1 Operationalization
+# Describe how the research questions are operationalized. 
+# a) Operationalize the research questions in a clear manner into a research design/strategy. 
+# b) Describe the procedures for conducting the research and collecting the data. 
+# c) For methodological and/or simulation projects describe the design of the simulation study. 
+
+- (Sparse) 3D-Array of conditions, order in terms of priority, do as far as we can
+- Models
+  - Linear, logistic, GGM, Ising
+- Model-search
+  - Occam's window
+  - BDMCMC, BDGraph
+  - BAS
+- Approximations for the marginals
+  - BIC
+  - Laplace
+  - BDGraph analytical approximation
+  - Bridge sample it (not for model search)
+** 4.2 Sample characteristics
+# d) In case of a simulation study, indicate how data will be generated
+- ...
+   
+** 4.4 Data analysis
+ # Describe the data preprocessing. Indicate for each research question separately, how it is translated into a statistical prediction. For example: “In a repeated measures ANOVA we expect an interaction effect of the between factor x and the within factor y on the dependent variable z. Also indicate how you will correct for multiple comparisons. Only the analyses proposed here can be described as confirmatory analyses in your research report. All other have to be mentioned as exploratory. 
+- Posterior probability of edge inclusion vs actual data-generating model
+** 4.4 Modifiability of procedure
+# Is there room for modification of the intended procedure? Evaluation of the proposal by the RMP Thesis Committee is meaningful only if the recommendations that the Committee might have can be implemented. It is therefore required that the intended procedure can be modified before you start gathering data. In situations where procedures or operationalization’s or sample characteristics cannot be modified, the Thesis Committee has to be consulted before handing in the research proposal. The committee will consider the eligibility of this project for a research thesis. 
+- Cut at any point
+ 
+\hfill Word count: /1000
+ 
+* 5. Intended results 
+# (250 w)
+# Clarify what the implication of possible outcomes would be (per hypothesis) for the specific and 
+# general research questions as well as for the theory. Address the following in approximately 250 
+# words:
+# a) What are the interpretations if the results do  match the expectations? 
+# b) What are the interpretations if the results do not match the expectations?
+# c) Are there any alternative interpretations?
+# d) Is there any practical or societal relevance? Please explain. 
+- Software
+- Updated assessment of Occam's window algorithm under multiple conditions
+- Is it useful to solve current issues with graphical models?
+  - Relevance of these issues
+
+\hfill Word count: /250
+
+* 6. Work plan
+# (500w)
+# Describe how the research project will be executed. Who is doing what and when? Is the planning of the current project realistic, efficient and feasible?
+** 6.1 Time schedule
+# State the total amount of EC as noted in the thesis contract (26-32EC excl. proposal), 1EC stands for 28 hours work. Present and justify a time schedule in weeks, including your time investment in hours per week. Plan some spare time, and indicate what elements can be cut / reduced if necessary. Provide the intended presentation date.
+  
+** 6.2 Infrastructure
+# Where will the research take place? How is access to the facilities and materials ensured?
+** 6.3 Data storage
+# Each researcher needs to comply with the storage protocol of the Research Institute Psychology: http://psyres.uva.nl/content/scientific-integrity-docs/data-protocol.html 
+** 6.3 Budget
+# The compensation from the department is max € 55 for each research project. If the total expenditure exceeds the maximum compensation, then specify how the surplus will be financed. The budget may be used for travel expenses, participant payment. Specify the financial ramifications for the intended research. Another € 25 budget may be used for printing costs (e.g. for the conference poster). Please go to the secretariat of the specialization of your supervisor with your receipts. 
+
+\hfill Word count: /500
+
+\printbibliography
+
+* 8. Further steps
+Make sure your supervisor submits an Ethics Checklist for your intended research to the Ethics Review Board of the Department of Psychology at https://www.lab.uva.nl/lab/ethics/
+* 7. Signatures
+- [ ] I hereby declare that both this proposal, and its resulting thesis, will only contain original material and is free of plagiarism (cf. Teaching and Examination Regulation in the research master’s course catalogue).
+- [ ] I hereby declare that the result section of the thesis will consist of two subsections, one entitled “confirmatory analyses” and one entitled “exploratory analyses” (one of the two subsections may be empty):
+  1. The confirmatory analysis section reports exactly the analyses proposed in Section 4 of this proposal.
+  2. The exploratory analysis section contains not previously specified, and thus exploratory, proposal analyses. 
+  
+\centering
+*Location:* \hspace{1cm} *Student’s signature:* \hspace{1cm} *Supervisor’s signature:*
+
+\raggedright
+\hspace{1.5cm} Amsterdam
