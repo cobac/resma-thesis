@@ -1,0 +1,24 @@
+* Topics form the email
+- I think I'm happy about the structure of the proposal, but I haven't spent too much time yet working on the quality of the sentences and the connections between topics, so I wouldn't recommend spending too much time giving feedback on that yet. 
+- I haven't check that all references are formatted properly yet. I see some mistakes already.
+- If feels weird to me to not include an introduction stating our goals in general terms first. However, the structure of the proposal template doesn't really call for it and other proposals I've seen don't do it. I might still do it.
+- I'm not sure if I prefer the notation I'm using for iterating over the set of models \(\mathcal A\), instead of using iterators from \(k=1\) to \(K\) models.
+- I have not included the full explanation of Occam's window algorithm, only conceptually how it works.
+- I quote the method for expanding the Laplace approximation from Rule et al. (2016). I don't know if you refereed to this method or /just/ to the expansion of the Taylor series that I've seen referenced form Lindley (1980) "Approximate Bayesian methods".
+- The number of words exceeds the maximum in the project description section, but this is fine as long as the total number of words between sections 3 & 4 remain below the combined maximum.
+* Other stuff
+- Concreteness of the simulation/data analysis plan
+- Not mentioning prior choice
+* Next steps
+- Send the proposal to my peers today/monday
+- Last meeting next week before submitting?
+* Feedback
+- Split arguments into smaller paragraphs
+- Connection between topics, e.g. compute marginals
+  - For some models are very easy to compute, for others not
+- Don't mention that many stuff on procedure
+- Complexity of the model and N on the conditions 
+- Different covariance structure / sparsity
+* Stuff for implementation
+- Start for the EM stuff
+- Possibly use the estimates of the full model to compare BF to the marginals of the rest of models
