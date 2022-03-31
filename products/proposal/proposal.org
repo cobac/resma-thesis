@@ -67,7 +67,7 @@ Occam's window is model search algorithm that uses heuristics to select a set of
 The goal of this project is to assess in general terms if Occam's window is a suitable method to explore the model space, specifically in the context of graphical models. To this end we will develop an Occam's window implementation and conduct a simulation study exploring how the algorithm performs under different conditions and how it compares to other alternative model search techniques.
 
 
-Keywords: Bayesian inference, model selection, model search algorithms, Occam's window
+Keywords: Bayesian inference, Bayesian model averaging, model selection, model search algorithms, Occam's window
 
 
 \hfill Word count: 150/150
