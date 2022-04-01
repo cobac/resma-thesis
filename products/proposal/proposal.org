@@ -61,16 +61,16 @@
 ** 2.1 Title: Assessing the performance Occam's window for Bayesian model averaging
 ** 2.2 Summary of proposal 
 
-When we select a statistical model and use it to make inferences about its parameters, we usually ignore the uncertainty derived from the model selection process leading to overconfident inferences. There are techniques that address this, like Bayesian model averaging. However, when the space of possible models is vast, such as with graphical models that are popular in psychology, it is not evident how to efficiently find the most relevant ones.
-Occam's window is model search algorithm that uses heuristics to select a set of candidate models.
+When we select a statistical model and use it to make inferences about its parameters, we usually ignore the uncertainty derived from the model selection process, leading to overconfident inferences. There are techniques that address this, like Bayesian model averaging. However, when the space of possible models is vast, such as with graphical models that are popular in psychology, it is not evident how to efficiently find the most relevant ones.
+Occam's window is a model search algorithm that explores the space of possible models.
 
-The goal of this project is to assess in general terms if Occam's window is a suitable method to explore the model space, specifically in the context of graphical models. To this end we will develop an Occam's window implementation and conduct a simulation study exploring how the algorithm performs under different conditions and how it compares to other alternative model search techniques.
+The goal of this project is to assess in general terms if Occam's window is a suitable method to explore the model space, specifically in the context of graphical models. To this end we will develop an Occam's window implementation, and conduct a simulation study exploring how the algorithm performs under different conditions and how it compares to other alternative model search techniques.
 
 
 Keywords: Bayesian inference, Bayesian model averaging, model selection, model search algorithms, Occam's window
 
 
-\hfill Word count: 150/150
+\hfill Word count: 148/150
 
 * 3. Project description 
 # (1200 w)
@@ -90,7 +90,7 @@ Different Bayesian solutions have been proposed that allow us to model the uncer
 The first group is using mixture models that encompass all possible models. To estimate the joint posterior distribution of all possible models researchers usually employ simulation based methods like Markov chain Monte Carlo model composition \parencite[MC^3,][]{madigan1995mc3} or reversible jump Markov chain Monte Carlo [[parencite:&green1995rjmcmc]].
 However, it is often unclear how to efficiently implement simulation based methods, and they tend to have stability issues
 [[parencite:&yao2018bayesianstacking]].
-The second group of approaches to multi-model inference is to combine the information only from a set of candidate models \(\mathcal A\), instead of using the whole model space. With these methods, the posterior probability of our target inference (e.g. whether a parameter is included on the model or not) given the observed data, \(p(\Delta | D)\), is a weighted average of that inference across all candidate models \(p(\Delta |M_k, D), \; M_k \in \mathcal A\). 
+The second group of approaches to multi-model inference is to only combine the information from a set of candidate models \(\mathcal A\), instead of using the whole model space. With these methods, the posterior probability of our target inference (e.g. whether a parameter is included on the model or not) given the observed data, \(p(\Delta | D)\), is a weighted average of that inference across all candidate models \(p(\Delta |M_k, D), \; M_k \in \mathcal A\). 
 This approach allows to separate the use of multiple models into two steps: identifying a set of candidate models \(\mathcal A\) and then combining the uncertainty from those models.
 
 One method to combine multiple models and not ignore the uncertainty of the model-selection process is Bayesian model averaging 
@@ -124,7 +124,7 @@ The literature is divided between proponents of marginal likelihood based method
 # - Stacking more robust option for model combination (?)
 #   - Although posterior distribution of parameters might be wonky, we were planing on using the sum of weights (posterior model probabilities in BMA) of the models that include a particular parameter
 
-When we do not have strong theoretical arguments to pre-select a set of candidate models \(\mathcal A\) to average with BMA, we can use a model search algorithm. One possible algorithm is the topic of this thesis: Occam's window
+When we do not have strong theoretical arguments to pre-select a set of candidate models \(\mathcal A\) to average with BMA, we can use model search algorithms. One possible algorithm is the topic of this thesis: Occam's window
 parencite:&madigan1994occamsgraphical;&raftery1997bmalinear,
 which is based on Occam's razor principle.
 Occam's razor (also known as the law of parsimony) states than when one is presented with competing hypotheses that explain equally well a particular phenomena, one should choose the simplest one.
@@ -168,7 +168,7 @@ which means that \[
 \]
 Bridge sampling offers another approach to approximate the marginal likelihood [[parencite:&gronau2017bridge;&bennett1976bridge]]. Bridge sampling generally provides accurate approximations of the marginal likelihoods, but is also very computationally demanding and not usable with a model search algorithm, because it is a simulation based method and has to draw samples.
 A method between BIC and bridge sampling in terms of accuracy and computational demands is the Laplace approximation [[parencite:&lecam1953some;&kass1995bayesfactors]]. This method approximates the posterior distribution with a normal distribution centered around the posterior mode, which can be estimated using expectation-maximization algorithms. The standard Laplace approximation is accurate to the second moment of the posterior distribution, but it is possible to extend it get more accurate approximations at the cost of more computational resources or further assumptions [[parencite:&ruli2016improvedlaplace;&rue2009inla;&hubin2016inla;&tierney1989laplace;&tierney1986accurate]].
-Lastly, note that in the context of Occam's window, it is possible to use a faster but less accurate approximation during model search, and use a slower but more accurate approximation during the model combination step.
+Lastly, note that in the context of Occam's window and BMA, it is possible to use a faster but less accurate approximation during model search, and use a slower but more accurate approximation during the model combination step.
 
 One of the drawbacks of Occam's window is that it overestimates the posterior probability of the selected "best" candidate models and it underestimates ---essentially nullifies---the posterior probability of the rest of the models. This is by design and acknowledged by [[textcite:&madigan1994occamsgraphical]], and it is a trade-off we have to make to avoid having to combine information from the complete model space. Occam's window is implemented for linear regression models using priors that allow to analytically calculate the marginal likelihoods [[parencite:&raftery1997bmalinear]] in the R package BMA [[parencite:&raftery2015bma]].
 There is also an extension of Occam's window to allows to model streams of data that become available sequentially [[parencite:&onorante2016dynamicow]].
@@ -181,11 +181,11 @@ There is also an extension of Occam's window to allows to model streams of data 
 # b) Translate the general research question in a clear manner into a specific research question.
 # c) Translate the specific research questions into testable research model/ expectations/ hypotheses.
 
-The goals of this project are to develop an Occam's window implementation for graphical models that are popular in psychological research, like the Gaussian graphical model (GGM) and the Ising model, and benchmark its performance.
+The goals of this project are to develop an efficient Occam's window implementation for graphical models that are popular in psychological research, like the Gaussian graphical model (GGM) and the Ising model, and benchmark its performance.
 To this end we will first implement Occam's window algorithm for simpler models, such as linear regression and logistic regression. 
 Later, we will explore with a simulation study the possible trade-offs between accuracy and computational speed of different marginal likelihood approximations, and also how Occam's window performance compares to alternative model search algorithms.
 
- \hfill Word count: 1291/1200
+ \hfill Word count: 1295/1200
   
 * 4. Procedure 
 # (1000 w)
@@ -201,7 +201,7 @@ There are more simulation conditions that are potentially interesting than how m
 
 Regarding which models to use during our simulations, linear regression is the obvious simplest choice to start developing the algorithm. Logistic regression is a next step that increases the complexity of the procedure, and the GGM and the Ising model are the ones that motivate this project. First, we will implement Occam's window algorithm using the BIC approximation for the marginal likelihood, since it is the simplest method and it will allow us to test our implementation while developing it. Next, for linear regression models and the GGM there are convenient prior distributions for the model parameters that allow to calculate the marginal likelihoods analytically. Finally, for the logistic and Ising models we will have to implement Laplace approximations of the marginal likelihoods.
 
-Alternative model search algorithms to Occam's window include Bayesian adaptive sampling (BAS) and birth-death Markov chain Monte Carlo (BDMCMC). BAS samples without replacement from the space of possible models and uses the marginal likelihoods of the sampled models to iteratively estimate the marginal likelihoods of the models that remain unsampled [[parencite:&clyde2011bas]]. BAS is available for (generalized) linear  models as an R package [[parencite:&clyde2021bas]]. BDMCMC [[parencite:&mohammadi2015bdgraph]] samples from the joint posterior space of all possible models, and uses a Poisson process to model the rate at which the Markov chains jump from one model to another. BDMCMC is available in the R package BDGraph [[parencite:&mohamamadi2019bdgraph]] for graphical models, which uses a pseudo-likelihood funciton [[parencite:&pensar2017marginalpseudo]] and an analytical approximation to the ratio of marginal likelihoods [[parencite:&mohammadi2017accelarating]].
+Alternative model search algorithms to Occam's window include Bayesian adaptive sampling (BAS) and birth-death Markov chain Monte Carlo (BDMCMC). BAS samples without replacement from the space of possible models and uses the marginal likelihoods of the sampled models to iteratively estimate the marginal likelihoods of the models that remain unsampled [[parencite:&clyde2011bas]]. BAS is available for (generalized) linear  models as an R package [[parencite:&clyde2021bas]]. BDMCMC [[parencite:&mohammadi2015bdgraph]] samples from the joint posterior space of all possible models, and uses a Poisson process to model the rate at which the Markov chains jump from one model to another. BDMCMC is available in the R package BDGraph [[parencite:&mohamamadi2019bdgraph]] for graphical models, which uses a pseudo-likelihood function [[parencite:&pensar2017marginalpseudo]] and an analytical approximation to the ratio of marginal likelihoods [[parencite:&mohammadi2017accelarating]].
 We will only implement Occam's window algorithm, and rely on the implementations of BAS for linear models and BDgraph for graphical models as benchmarks.
 
 # Taking this into consideration, these are broadly speaking the conditions we will prioritize testing:
@@ -272,9 +272,9 @@ This thesis project consists of 28 EC, excluding the thesis proposal. This is eq
   - Week 4: Implement analytical evaluations of the marginal likelihood for linear regression models.
 - May :: 
   - Week 1: Buffer time and hopefully enjoy the UvA teaching-free days.
-  - Week 3: Implement analytical evaluations of the marginal likelihood for Gaussian graphical models.
+  - Week 2: Implement analytical evaluations of the marginal likelihood for Gaussian graphical models.
   - Week 3: Buffer time and start running simulations, including with BAS and BDGraph.
-  - Week 4: Continue running simulations and implement the Laplace approximation for logistic models.
+  - Week 4: Continue running simulations and implement the Laplace approximation for logistic regression models.
 - June :: 
   - Week 1: Continue running simulations and implement the Laplace approximation for Ising models.
   - Week 2: Continue running simulations and start analyzing results. Start writing the thesis.
@@ -298,7 +298,7 @@ We will keep the results of all our simulations under version control and with r
 
 In principle we will not require extra funds to complete this project. In the case that the computational resources that we have access to prove insufficient to conduct the simulations, we might consider using cloud computing services. In any case, such costs would not exceed the maximum budget.
 
-\hfill Word count: 323/500
+\hfill Word count: 324/500
 
 \printbibliography
 
