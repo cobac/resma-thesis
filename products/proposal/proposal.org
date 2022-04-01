@@ -58,7 +58,7 @@
   
 \pagenumbering{arabic}
 * 2. Title and Summary of the Research Project
-** 2.1 Title: Assessing the performance Occam's window for Bayesian model averaging
+** 2.1 Title: Assessing the performance of Occam's window for Bayesian model averaging
 ** 2.2 Summary of proposal 
 
 When we select a statistical model and use it to make inferences about its parameters, we usually ignore the uncertainty derived from the model selection process, leading to overconfident inferences. There are techniques that address this, like Bayesian model averaging. However, when the space of possible models is vast, such as with graphical models that are popular in psychology, it is not evident how to efficiently find the most relevant ones.
@@ -90,7 +90,7 @@ Different Bayesian solutions have been proposed that allow us to model the uncer
 The first group is using mixture models that encompass all possible models. To estimate the joint posterior distribution of all possible models researchers usually employ simulation based methods like Markov chain Monte Carlo model composition \parencite[MC^3,][]{madigan1995mc3} or reversible jump Markov chain Monte Carlo [[parencite:&green1995rjmcmc]].
 However, it is often unclear how to efficiently implement simulation based methods, and they tend to have stability issues
 [[parencite:&yao2018bayesianstacking]].
-The second group of approaches to multi-model inference is to only combine the information from a set of candidate models \(\mathcal A\), instead of using the whole model space. With these methods, the posterior probability of our target inference (e.g. whether a parameter is included on the model or not) given the observed data, \(p(\Delta | D)\), is a weighted average of that inference across all candidate models \(p(\Delta |M_k, D), \; M_k \in \mathcal A\). 
+The second group of approaches to multi-model inference is to only combine the information from a set of candidate models \(\mathcal A\), instead of using the whole model space. With these methods, the posterior probability of our target inference (e.g. whether a parameter is included in the model or not) given the observed data, \(p(\Delta | D)\), is a weighted average of that inference across all candidate models \(p(\Delta |M_k, D), \; M_k \in \mathcal A\). 
 This approach allows to separate the use of multiple models into two steps: identifying a set of candidate models \(\mathcal A\) and then combining the uncertainty from those models.
 
 One method to combine multiple models and not ignore the uncertainty of the model-selection process is Bayesian model averaging 
