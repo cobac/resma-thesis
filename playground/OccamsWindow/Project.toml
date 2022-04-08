@@ -1,0 +1,8 @@
+name = "OccamsWindow"
+uuid = "37daae3a-a82d-4c15-8093-19d44927d00f"
+authors = ["Coba <coba@cobac.eu>"]
+version = "0.1.0"
+
+[deps]
+BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
+StatsAPI = "82ae8749-77ed-4fe6-ae5f-f523153014b0"
