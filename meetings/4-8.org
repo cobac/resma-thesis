@@ -1,10 +1,14 @@
 * Proposal
 - I'm happy
 - I predict either approval or asking for more details about the procedure
-* Another marginal approximation
+* Another BF approximation
 - Frantisek & EJ's paper with an approximation of the BF based on the MLE and it's standard error
-- Very easy to implement
 - https://arxiv.org/pdf/2203.01435.pdf
+- Very easy to implement
+- Although (I'm not sure) I think only works if the two models only differ in one single parameter
+  - Maybe it's extensible if the difference is a set of parameters (?)
+  - Most of the comparisons during model search are between models that only differ on 1 parameter
+  - .. But not all of them
 * Implementation
 - Use and wrap existing Julia libraries and interface
 - There are amazing interfaces for frequentist, ML-y and Bayesian-sampled models
