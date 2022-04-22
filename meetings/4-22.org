@@ -1,0 +1,22 @@
+* Implementation
+* Occam's window
+*** Found the 2 bugs!
+  - One of the conditions for stopping the search...
+    - (e.g. in the down pass all candidate models had just 1 parameter)
+    - ... was deleting those models and breaking out of the loop without adding the models back in
+  - The accepted models and candidate models sets could become the same in some conditions and they would force all models to be deleted
+*** Finding the true models
+- It was not finding the correct models
+- After increasing the sample size to 5,000 it works better
+*** Weights of the models
+- I thought the weights of the model are suspiciously uniform
+- Now I think it's just how BIC works
+*** Something fishy about a 0-dim array
+** Simple Bayesian Linear Regression with conjugate priors
+- WIP as a simple package
+- Just linear algebra so not expecting any weird bugs/behavior
+* Proposal
+* Next week
+- Submit proposal revision
+- Preliminary simulations and nice demo of BIC + analytical for linear models
+
