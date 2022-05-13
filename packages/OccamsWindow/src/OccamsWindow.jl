@@ -4,7 +4,7 @@ using DataFrames, GLM, Distributions, StatsAPI, StatsModels, BayesianLinearRegre
 
 import StatsAPI.bic
 
-export model_search, OccamsWindowParams, BIC, Analytical
+export model_search, OccamsWindowParams, AbstractMarginalApproximation, BIC, Analytical
 
 include("marginal_approximations.jl")
 include("submodels.jl")
