@@ -1,0 +1,16 @@
+name = "BayesianLinearRegression"
+uuid = "9127f14b-3ca4-41fa-9dd4-378675d471c3"
+authors = ["Coba <coba@cobac.eu>"]
+version = "0.1.0"
+
+[deps]
+BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+PProf = "e4faabce-9ead-11e9-39d9-4379958e3056"
+Profile = "9abbd945-dff8-562f-b5e8-e1ebf5ef1b79"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+StatsAPI = "82ae8749-77ed-4fe6-ae5f-f523153014b0"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+StatsModels = "3eaba693-59b7-5ba5-a881-562e759f1c8d"
