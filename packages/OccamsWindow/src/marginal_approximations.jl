@@ -20,7 +20,7 @@ struct ModelAndMarginal{M<:StatisticalModel,A<:AbstractMarginalApproximation}
     model::M
     approximation::A
     value
-    # TODO ModelAndMarginal positive marginals check
+    # TODO: ModelAndMarginal positive marginals check
     # function ModelAndMarginal{M, A}(model, approximation, value) where
     # {M <: StatisticalModel, A <: AbstractMarginalApproximation}
     # value < 0 && error("The value of the marginal likelihood has to be positive.")

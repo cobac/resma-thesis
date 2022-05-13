@@ -1,7 +1,7 @@
 struct NamedBits{N}
     bits::BitArray{N}
     names::Array{String,N}
-    # TODO
+    # TODO: Implement size check
     # function NamedBits(bits, names)
     #     size(bits) != size(names) && error("Mismatch dimensions between bits and names.")
     #     return new{typeof(bits)}(bits, names)

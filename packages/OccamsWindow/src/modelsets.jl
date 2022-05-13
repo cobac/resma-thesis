@@ -36,7 +36,7 @@ struct WeightedModelSet{N,M<:StatisticalModel,F<:AbstractFloat}
     bits::Vector{BitArray{N}}
     models::Vector{M}
     weights::Vector{F}
-    # TODO WeightedModelSet length weights and sum of weights check
+    # TODO: WeightedModelSet length weights and sum of weights check
     # function WeightedModelSet{M}(models::Vector{M}, weights::Vector{F}) where {M <: StatisticalModel, F <: AbstractFloat}
     #     length(models) != length(weights) &&
     #         error("The length of the set of models and the set of weights has to match.")
@@ -51,6 +51,7 @@ function WeightedModelSet(bits::Vector{BitArray{N}}, models::Vector{ModelAndMarg
 {N,M<:StatisticalModel,A<:AbstractMarginalApproximation}
     sort!(models, by = x -> -x.value)
     # Assumes uniform model priors for now
+    # TODO: Allow for custom prios
     marginal_total = mapreduce(x -> exp(big(x.value)), +, models)
     return WeightedModelSet(bits,
         [m.model for m in models],
