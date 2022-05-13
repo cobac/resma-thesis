@@ -1,0 +1,82 @@
+* Occam's window
+- I was making a mistake using the log(marginal_likelihood) as posterior weights
+  - Need to exp() them!
+  - Issues with floating points... fixed with BigFloats
+- There are a few spaguettied things that I'd like to improve
+  - Hard to prioritize it though since the core algorithm shouldn't change more during the thesis
+* Bayesian linear regression package with analytical marginals
+- Implemented!
+- The calculation of the marginal is significantly more expensive than just the BF
+  - Because evaluating the Gamma distribution
+  - So I thought that I had to modify the general search code to work with BFs too
+  - But not necessary
+    - I'm just storing the non-normalized values
+- There is a relative expensive computation inverting matrices
+  - ~5s for n=5000
+  - I'm using BLAS for now...
+  - Maybe it could be sped up with some factorization
+    - There is some structure in the matrix that maybe I could exploit, but idk what it is
+    - Not hermitian poss-def, not even fully symmetric
+  - Or using pseudoinverses, make sense as an approximation to the likelihood
+- In total ~5mins per run with n=5000
+  - Not horrible for simulations but
+  - Compared to less than 100ms... using BMA or BAS or BIC approximation
+* BMA
+- Way faster than our algorithm with the analytical approximation
+- I've had to go into the code
+  - 2015 translation from old Splus code
+  - I should've done it sooner...
+  - The specific algorithm is not documented in any paper
+** Things I've realized
+- Leaps and bounds are used to cut the space of models that then Occam's window explores
+  - 150 models per no. of variables
+  - Leaps and bounds only works for linear models, so not for graphical and I'm ignoring it
+  - Although I'm not sure why
+    - The only reference in the package is a book and an acknowledgement to Clyde
+      - I have to check it out
+    - The reference on the Occam windows papers is to Furnival & Wilson (1974)
+      - The algorithm is super efficient because it uses sequential calculations
+      - But I think that you could still implement the leaps and bounds part without the sequential calculations
+- And.... they use BIC during model search
+  - This is not documented anywhere I've seen
+  - The paper that describes the method is the one that introduces the analytical approximation
+  - They also use it for GLMs, but with a custom/weird/approximation leaps
+- And.. they don't use the algorithm they describe in the paper
+  - Since the leaps and bounds basically returns the whole model space to consider and then they just remove from it
+  - They don't sample submodels and supermodels
+* Simulations
+** Linear regression BIC
+- BMA don't do intercept probs
+  - BAS does
+  - I do
+- It's gonna make sense to add BMA as a different simulation condition to our Occam's since it's a different algorithm
+*** Results
+- BAS: 12ms, BMA: 80ms, Ours: 6ms
+- BMA and BAS just... work extremely well under all conditions
+  - 1 sensitivity & specificity unless the very extreme cases
+- Our Occam's window... doesn't
+  - Overselects parameters
+  - Two options
+    - I've made a mistake in the implementation and there is a bug somewhere
+      - I've been debugging multiple days
+    - (I don't think this is the case) The algorithm just doesn't work
+** Getting ready for the real ones
+  - Slow
+  - Throttling
+    - Using all cores in my laptop
+    - Running headless
+    - Reapplied thermal paste
+    - But.. idk
+  - Computer unusable while doing this
+* GGM
+- Chapter in Handbook book nice
+- I thought it was gonna be easier to copy what BGGM does
+  - Still need to check how to get the marginals
+  - Sample from the F distribution but idk
+  - I thought there was gonna be an analytical expression
+  - Need to read their papers
+    
+* Progress
+- Good, on track... if the Occam's Window algorithm we are using ends up working
+- If not... well
+* Data collection
