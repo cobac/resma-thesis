@@ -4,6 +4,7 @@
   - Issues with floating points... fixed with BigFloats
 - There are a few spaguettied things that I'd like to improve
   - Hard to prioritize it though since the core algorithm shouldn't change more during the thesis
+  - Won't affect performance, just make it easier to add new models
 * Bayesian linear regression package with analytical marginals
 - Implemented!
 - The calculation of the marginal is significantly more expensive than just the BF
@@ -54,6 +55,7 @@
 - BAS: 12ms, BMA: 80ms, Ours: 6ms
 - BMA and BAS just... work extremely well under all conditions
   - 1 sensitivity & specificity unless the very extreme cases
+  - BAS sometimes not
 - Our Occam's window... doesn't
   - Overselects parameters
   - Two options
