@@ -26,7 +26,7 @@ function model_search(saturated_model::M, marginal_approximation::A, params::Occ
         ModelAndMarginal{get_model_type(saturated_model),
             typeof(marginal_approximation)})
 
-    bits₀ = rand(Bool, length(saturated_bits))
+    bits₀ = randombits(length(saturated_bits))
     # 𝒞 from Madigan & Raftery (1994)
     candidate_models = ModelSet([(BitArray(bits₀),
         ModelAndMarginal(fit(model_specs, bits₀),

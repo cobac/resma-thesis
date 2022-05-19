@@ -58,3 +58,10 @@ function sample_supermodels(model_el, model_specs, marginal_approximation)
     end
     return out
 end 
+function randombits(n)
+    bits = rand(Bool, n)
+    if sum(bits) == 0
+        return randombits(n)
+    end
+    return bits
+end
