@@ -1,7 +1,7 @@
 using OccamsWindow, Test
 using DataFrames, GLM, Distributions, Random, StatsAPI
 
-const N_TEST = 10
+const N_TEST = 1000
 p = 10 # no. params
 n = 500 # no. obs
 
@@ -64,5 +64,6 @@ end
 @testset "Model search base" begin
     for i in 1:N_TEST
         model_search(saturated_model, BIC())
+        @test true == true
     end
 end 
