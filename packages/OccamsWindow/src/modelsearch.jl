@@ -88,7 +88,7 @@ function model_search(saturated_model::StatisticalModel, marginal_approximation:
     out_modelset = WeightedModelSet(out_bits, out_models)
 
     coef_weights = zeros(length(saturated_bits))
-    for bit in eachindex(saturated_bits)
+    for bit in eachindex(saturated_bits.bits)
         for model in eachindex(out_models)
             if out_bits[model][bit]
                 coef_weights[bit] += out_modelset.weights[model]
