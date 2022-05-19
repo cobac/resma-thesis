@@ -35,7 +35,7 @@ end
 function sample_submodels(model_el, model_specs, marginal_approximation)
     bits = first(model_el)
     trues = findall(bits)
-    out = ModelSet(length(size(bits)), ModelAndMarginal{typeof(last(model_el).model),typeof(marginal_approximation)})
+    out = emptyModelSet(ModelAndMarginal{typeof(last(model_el).model),typeof(marginal_approximation)})
     for dropped_edge in trues
         submodel_bits = copy(bits)
         submodel_bits[dropped_edge] = 0
@@ -48,8 +48,7 @@ end
 function sample_supermodels(model_el, model_specs, marginal_approximation)
     bits = first(model_el)
     falses = findall(.!bits)
-    out = ModelSet(length(size(bits)),
-        ModelAndMarginal{typeof(last(model_el).model),typeof(marginal_approximation)})
+    out = emptyModelSet(ModelAndMarginal{typeof(last(model_el).model),typeof(marginal_approximation)})
     for added_edge in falses
         supermodel_bits = copy(bits)
         supermodel_bits[added_edge] = 1
@@ -57,7 +56,8 @@ function sample_supermodels(model_el, model_specs, marginal_approximation)
         out[supermodel_bits] = ModelAndMarginal(m, marginal_approximation)
     end
     return out
-end 
+end
+
 function randombits(n)
     bits = rand(Bool, n)
     if sum(bits) == 0

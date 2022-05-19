@@ -1,9 +1,9 @@
-struct ModelSet{N,MA<:ModelAndMarginal}
-    dict::Dict{BitArray{N},MA}
+struct ModelSet{MA<:ModelAndMarginal}
+    dict::Dict{BitVector,MA}
 end
 
-ModelSet(N, MA) = ModelSet(Dict{BitArray{N},MA}())
-ModelSet(xs) = ModelSet(Dict(xs))
+emptyModelSet(MA) = ModelSet(Dict{BitVector,MA}())
+ModelSet(xs::Vector) = ModelSet(Dict(xs))
 
 function Base.show(io::IO, ms::ModelSet)
     for k in keys(ms.dict)
@@ -32,8 +32,8 @@ Base.iterate(ms::ModelSet, xs...) = iterate(ms.dict, xs...)
 
 Base.copy(ms::ModelSet) = ModelSet(copy(ms.dict))
 
-struct WeightedModelSet{N,M<:StatisticalModel,F<:AbstractFloat}
-    bits::Vector{BitArray{N}}
+struct WeightedModelSet{M<:StatisticalModel,F<:AbstractFloat}
+    bits::Vector{BitVector}
     models::Vector{M}
     weights::Vector{F}
     # TODO: WeightedModelSet length weights and sum of weights check
@@ -47,8 +47,8 @@ end
 
 # WeightedModelSet(models::Vector{T}, weights::Vector{F}) where {T <: StatisticalModel, F <: AbstractFloat} = WeightedModelSet(models, weights)
 
-function WeightedModelSet(bits::Vector{BitArray{N}}, models::Vector{ModelAndMarginal{M,A}}) where
-{N,M<:StatisticalModel,A<:AbstractMarginalApproximation}
+function WeightedModelSet(bits::Vector{BitVector}, models::Vector{ModelAndMarginal{M,A}}) where
+{M<:StatisticalModel,A<:AbstractMarginalApproximation}
     sort!(models, by = x -> -x.value)
     # Assumes uniform model priors for now
     # TODO: Allow for custom prios

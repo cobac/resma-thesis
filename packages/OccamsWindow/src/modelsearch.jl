@@ -14,21 +14,19 @@ end
 #     return model_search(saturated_model.model, marginal_approximation)
 # end 
 
-function model_search(saturated_model::M, marginal_approximation::A, params::OccamsWindowParams = OccamsWindowParams()) where
-{M<:StatisticalModel,A<:AbstractMarginalApproximation}
+function model_search(saturated_model::StatisticalModel, marginal_approximation::AbstractMarginalApproximation, params::OccamsWindowParams = OccamsWindowParams())
     @debug "General model_search() called."
     saturated_bits = get_coef_bits(saturated_model)
     model_specs = get_model_specs(saturated_model)
     (; Oᵣ, Oₗ) = params
 
     # 𝓐  from Madigan & Raftery (1994)
-    accepted_models = ModelSet(size(saturated_bits),
-        ModelAndMarginal{get_model_type(saturated_model),
-            typeof(marginal_approximation)})
+    accepted_models = emptyModelSet(ModelAndMarginal{get_model_type(saturated_model),
+        typeof(marginal_approximation)})
 
     bits₀ = randombits(length(saturated_bits))
     # 𝒞 from Madigan & Raftery (1994)
-    candidate_models = ModelSet([(BitArray(bits₀),
+    candidate_models = ModelSet([(BitVector(bits₀),
         ModelAndMarginal(fit(model_specs, bits₀),
             marginal_approximation))])
 
@@ -52,16 +50,15 @@ function model_search(saturated_model::M, marginal_approximation::A, params::Occ
                 candidate_models[first(m₀)] = last(m₀)
             end
         end
-        @debug accepted_models
-        @debug candidate_models
+        # @debug accepted_models
+        # @debug candidate_models
     end # Down pass
 
     # Up pass
     up_iter = 0
     candidate_models = accepted_models
-    accepted_models = ModelSet(size(saturated_bits),
-        ModelAndMarginal{get_model_type(saturated_model),
-            typeof(marginal_approximation)})
+    accepted_models = emptyModelSet(ModelAndMarginal{get_model_type(saturated_model),
+        typeof(marginal_approximation)})
     while !isempty(candidate_models)
         up_iter += 1
         @debug "Up pass iter: $up_iter"
@@ -88,9 +85,21 @@ function model_search(saturated_model::M, marginal_approximation::A, params::Occ
 
     out_bits = collect(keys(accepted_models))
     out_models = [accepted_models[k] for k in out_bits]
-    return OccamsWindowSolution(WeightedModelSet(out_bits, out_models),
+    out_modelset = WeightedModelSet(out_bits, out_models)
+
+    coef_weights = zeros(length(saturated_bits))
+    for bit in eachindex(saturated_bits)
+        for model in eachindex(out_models)
+            if out_bits[model][bit]
+                coef_weights[bit] += out_modelset.weights[model]
+            end
+        end
+    end
+
+    return OccamsWindowSolution(out_modelset,
         saturated_model,
         marginal_approximation,
         down_iter,
-        up_iter)
+        up_iter,
+        coef_weights)
 end 
