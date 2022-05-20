@@ -1,8 +1,9 @@
-struct lmModelSpecs{F <: AbstractFloat} <: AbstractModelSpecs
+struct lmModelSpecs{F<:AbstractFloat} <: AbstractModelSpecs
     X::Matrix{F}
     y::Vector{F}
 end
 
+# We need to use the wrapped typed from StatsModels.jl because the model types from GLM.jl don't store the name of the variables
 get_model_type(model::StatsModels.TableRegressionModel) = typeof(model.model)
 
 function get_tablemodel_type(m::StatsModels.TableRegressionModel{M,T}) where {M,T}

@@ -4,16 +4,6 @@ Base.@kwdef struct OccamsWindowParams{F<:AbstractFloat}
     Oₗ::F = log(20.0)
 end
 
-
-# We need to use the wrapped typed from StatsModels.jl because the model types from GLM.jl don't store the name of the variables
-# function model_search(saturated_model::Union{StatsModels.TableStatisticalModel{M},
-#                                              StatsModels.TableRegressionModel{M}},
-#                       marginal_approximation::A) where
-#     {M <: StatisticalModel,  A <: AbstractMarginalApproximation}
-#     @debug "StatsModels wrappers model_search() called."
-#     return model_search(saturated_model.model, marginal_approximation)
-# end 
-
 function model_search(saturated_model::StatisticalModel, marginal_approximation::AbstractMarginalApproximation, params::OccamsWindowParams = OccamsWindowParams())
     @debug "General model_search() called."
     saturated_bits = get_coef_bits(saturated_model)
