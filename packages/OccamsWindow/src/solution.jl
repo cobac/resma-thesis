@@ -2,6 +2,7 @@ struct OccamsWindowSolution{F<:AbstractFloat,M<:StatisticalModel,MS<:Statistical
     modelset::WeightedModelSet{M}
     saturated_model::MS
     approximation::A
+    hyperparams::OccamsWindowParams
     down_iters::Int
     up_iters::Int
     coef_weights::Vector{F}

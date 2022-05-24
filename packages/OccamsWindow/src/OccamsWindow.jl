@@ -10,6 +10,7 @@ include("marginal_approximations.jl")
 include("submodels.jl")
 include("modelsets.jl")
 include("supported_models.jl")
+include("hyperparams.jl")
 include("solution.jl")
 include("modelsearch.jl")
 end # module

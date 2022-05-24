@@ -1,10 +1,4 @@
 
-Base.@kwdef struct OccamsWindowParams{F<:AbstractFloat}
-    Oᵣ::F = 0.0 # log(1)
-    Oₗ::F = log(20.0)
-    startup::Symbol = :saturated
-end
-
 function model_search(saturated_model::StatisticalModel, marginal_approximation::AbstractMarginalApproximation; hyperparams::OccamsWindowParams = OccamsWindowParams())
     @debug "General model_search() called."
     saturated_bits = get_coef_bits(saturated_model)
@@ -19,18 +13,18 @@ function model_search(saturated_model::StatisticalModel, marginal_approximation:
         bits₀ = (fill(true, length(saturated_bits)),)
     elseif startup == :random
         no_bits = length(saturated_bits)
-        max_int = 1 << no_bits - 1 
+        max_int = 1 << no_bits - 1
         max_int == -1 && error("err... buffer overflow calculating the no. of possible models")
         ints = sample(1:max_int, 500, replace = false)
         bits₀ = BitVector.(digits.(ints, base = 2, pad = length(saturated_bits)))
-    elseif startup == :singlerandom 
+    elseif startup == :singlerandom
         bits₀ = (randombits(length(saturated_bits)),)
     end
 
     # 𝒞 from Madigan & Raftery (1994)
     candidate_models = ModelSet([(BitVector(bit₀),
         ModelAndMarginal(fit(model_specs, bit₀),
-            marginal_approximation)) for bit₀ in bits₀]) 
+            marginal_approximation)) for bit₀ in bits₀])
 
     # Down pass
     down_iter = 0
@@ -101,6 +95,7 @@ function model_search(saturated_model::StatisticalModel, marginal_approximation:
     return OccamsWindowSolution(out_modelset,
         saturated_model,
         marginal_approximation,
+        hyperparams,
         down_iter,
         up_iter,
         coef_weights)
