@@ -19,6 +19,8 @@ function model_search(saturated_model::StatisticalModel, marginal_approximation:
         bits₀ = BitVector.(digits.(ints, base = 2, pad = length(saturated_bits)))
     elseif startup == :singlerandom
         bits₀ = (randombits(length(saturated_bits)),)
+    else
+        error("Unrecognized startup option: ", startup)
     end
 
     # 𝒞 from Madigan & Raftery (1994)
