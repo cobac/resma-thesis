@@ -1,10 +1,19 @@
-
 struct blmModelSpecs{F<:AbstractFloat} <: AbstractModelSpecs
     s::FormulaTerm
     X::Matrix{F}
     y::Vector{F}
     hyper::BayesianLinearRegression.BayesianLinearModelHyperparams
 end
+
+function predictors(specs::blmModelSpecs)
+    x = specs.X
+    if (all(x[:, 1] .== 1.0))
+        has_intercept = true
+        x = x[:, 2:end]
+    end
+    return x, has_intercept
+end
+response(specs::blmModelSpecs) = specs.y
 
 get_model_type(model::BayesianLinearRegression.BayesianLinearModel) = typeof(model)
 

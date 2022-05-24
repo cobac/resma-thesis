@@ -19,6 +19,19 @@ function model_search(saturated_model::StatisticalModel, marginal_approximation:
         bits₀ = BitVector.(digits.(ints, base = 2, pad = length(saturated_bits)))
     elseif startup == :singlerandom
         bits₀ = (randombits(length(saturated_bits)),)
+    elseif startup == :leaps
+        R"library(leaps)"
+        model_x, has_intercept = predictors(model_specs)
+        model_y = response(model_specs)
+        @rput model_x
+        @rput model_y
+        @rput has_intercept
+        R"startup_bits <- leaps(model_x, model_y, int = has_intercept)$which"
+        @rget startup_bits
+        bits₀ = BitVector.(collect(eachrow(startup_bits)))
+        map!(bits₀, bits₀) do bits
+            append!([true], bits)
+        end
     else
         error("Unrecognized startup option: ", startup)
     end
@@ -101,4 +114,4 @@ function model_search(saturated_model::StatisticalModel, marginal_approximation:
         down_iter,
         up_iter,
         coef_weights)
-end 
+end

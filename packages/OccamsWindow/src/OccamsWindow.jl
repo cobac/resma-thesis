@@ -1,6 +1,6 @@
 module OccamsWindow
 
-using DataFrames, GLM, Distributions, StatsAPI, StatsModels, StatsBase, BayesianLinearRegression
+using DataFrames, GLM, Distributions, StatsAPI, StatsModels, StatsBase, BayesianLinearRegression, RCall
 
 import StatsAPI.bic
 
