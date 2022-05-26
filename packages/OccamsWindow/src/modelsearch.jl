@@ -20,6 +20,8 @@ function model_search(saturated_model::StatisticalModel, marginal_approximation:
     elseif startup == :singlerandom
         bits₀ = (randombits(length(saturated_bits)),)
     elseif startup == :leaps
+        typeof(model_specs) <: Union{lmModelSpecs,blmModelSpecs} ||
+            error("Unsupported model specification for the leaps-and-bounds algorithm: ", typeof(model_specs))
         R"library(leaps)"
         model_x, has_intercept = predictors(model_specs)
         model_y = response(model_specs)
