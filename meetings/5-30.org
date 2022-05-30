@@ -1,0 +1,59 @@
+* Analytical marginal linear
+- I don't think we are going to use this since BIC seems to work very well
+- But I've implemented the Cholesky factorization and it's a x2 speed increase
+- I can still do pseudo inverses but meh
+* MWE GGM
+- I'm using corrected (n-1) covariances for the covariance matrix
+  - ... is this correct?
+- Issue with target matrix
+  - Fitting the model is fine
+  - Just a Multivariate normal
+  - I'm getting errors when defining the constrained model
+  - The resulting precision matrix is not Hermitian
+  - Any computational tips?
+* Performance
+** Linear models
+*** From saturated
+- With more constrained window,  produces 1/1 results
+*** Leaps
+- ~Just as BMA
+** Intercept wonkyness
+- Different packages treat the intercept differently
+- So no 100% deterministic reproduction with BMA, but same performance
+- Over-selects the intercept even if the true model does not include it
+** Upgraded R & Julia
+- Something is off
+* Next plans
+** Refactor
+- Right now it is a MWE
+- I've realized integrating the GGM model that the current interface is very regression-centric
+  - Bit spagguetti getting parameter names and stuff
+- It is the perfect time to refactor the Occam's window code
+  - I have a clear picture now of all the moving parts I have to manage
+- More speed and generality:
+  - Store bitvectors and marginals in hash tables
+    - Right now what I'm storing is full models
+      - A loot of memory allocations
+      - For normal usecases it's ok, but for simulations issues
+- Drop the marginal approximations interface or maybe keep it and re-calculate the marginals of the remaining models
+- Not for perfectionism but for pragmatism
+** Implement & test GGM
+- Once I figure out the issue with the constrained precision matrix
+** Ising
+- Likelihood from node-wise estimation?
+- Other approaches to get the likelihood for BIC?
+** Start simulating
+** No laplace/analytical simulations
+  - Too long, too many marginal calculations
+  - We would need to do some clever sequential calculations with pseudo-likelihoods
+- Depends on how it performs with GGM 
+* Product expectations
+- General, well implemented software
+  - ~Easy to access from R
+  - Hopefully it works for graphical models (:
+- Simulations
+- /enough/?
+* Summer plans?
+- Defense date?
+  - ~15th July
+- Submission plans?
