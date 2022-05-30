@@ -25,7 +25,7 @@ function get_model_specs(model::StatsModels.TableRegressionModel)
     model_type = get_tablemodel_type(model)
     if (model_type <: GLM.LinearModel)
         X = modelmatrix(model)
-        y = response(model)
+        y = StatsModels.response(model)
         return lmModelSpecs(X, y)
     else
         error("Model type not supported: ", typeof(model))
