@@ -1,35 +1,22 @@
-struct OccamsWindowSolution{F<:AbstractFloat,M<:StatisticalModel,MS<:StatisticalModel,A<:AbstractMarginalApproximation}
-    modelset::WeightedModelSet{M}
-    saturated_model::MS
+struct OccamsWindowSolution{F<:AbstractFloat,S<:AbstractModelSpecs,A<:AbstractMarginalApproximation}
+    modelset::WeightedModelSet{F}
+    specs::S
     approximation::A
-    hyperparams::OccamsWindowParams
-    down_iters::Int
-    up_iters::Int
+    hyperparams::OccamsWindowParams{F}
+    iters::Tuple{Int, Int}
     coef_weights::Vector{F}
-end
-
+ end
+ 
 function Base.show(io::IO, solution::OccamsWindowSolution)
-    (; modelset, saturated_model, approximation, down_iters, up_iters, coef_weights) = solution
-    println(io, "Occam's Window executed for $down_iters + $up_iters = $(down_iters+up_iters) iterations, using the $approximation approximation to the marginal likelihood.")
+    (; modelset, specs, approximation, iters, coef_weights) = solution
+    println(io, "Occam's Window executed for $iters[1] + $iters[2] = $(sum(iters)) iterations, using the $approximation approximation to the marginal likelihood.")
     println(io, "")
     println(io, "Weight: model formula")
     println(io, "---------------------")
-    show(io, modelset, saturated_model)
+    show(io, modelset)
+    println(io, "")
+    println(io, "Parameter => posterior weight")
     println(io, "---------------------")
-    println(io, "Parameter: posterior weight")
-    println(io, "---------------------")
-    coef_names = get_coef_bits(saturated_model).names
+    coef_names = param_names(specs)
     show(io, Pair.(coef_names, coef_weights))
-end
-
-function Base.show(io::IO, weighted_models::WeightedModelSet, saturated_model::StatisticalModel)
-    (; bits, weights) = weighted_models
-    for i in eachindex(bits)
-        println(io, round(weights[i], digits = 4), ": ", get_formula(bits[i], saturated_model))
-    end
-end
-
-function get_formula(bits, saturated_model)
-    f = formula(saturated_model)
-    return f.lhs ~ foldl(+, f.rhs.terms[bits])
 end

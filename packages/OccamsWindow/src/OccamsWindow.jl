@@ -6,10 +6,11 @@ import StatsAPI.bic
 
 export model_search, OccamsWindowParams, AbstractMarginalApproximation, BIC, Analytical
 
-include("marginal_approximations.jl")
 include("submodels.jl")
-include("modelsets.jl")
+include("marginal_approximations.jl")
 include("supported_models.jl")
+include("cache.jl")
+include("modelsets.jl")
 include("hyperparams.jl")
 include("solution.jl")
 include("modelsearch.jl")

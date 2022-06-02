@@ -5,23 +5,14 @@ struct blmModelSpecs{F<:AbstractFloat} <: AbstractModelSpecs
     hyper::BayesianLinearRegression.BayesianLinearModelHyperparams
 end
 
-function predictors(specs::blmModelSpecs)
-    x = specs.X
-    if (all(x[:, 1] .== 1.0))
-        has_intercept = true
-        x = x[:, 2:end]
-    end
-    return x, has_intercept
-end
-response(specs::blmModelSpecs) = specs.y
 
-get_model_type(model::BayesianLinearRegression.BayesianLinearModel) = typeof(model)
+# supportsleaps() and leaps_data() defined in file lm.jl
 
-function get_model_specs(model::BayesianLinearRegression.BayesianLinearModel)
+function model_specs(model::BayesianLinearRegression.BayesianLinearModel)
     return blmModelSpecs(model.s, model.X, model.y, model.hyperparams)
 end
 
-function fit(specs::blmModelSpecs, bits)
+function fit(specs::blmModelSpecs, bits::BitVector)
     vars = findall(bits)
     new_s = FormulaTerm(specs.s.lhs, StatsModels.MatrixTerm(specs.s.rhs.terms[vars]))
     return BayesianLinearRegression.blm(new_s, specs.X[:, vars], specs.y, specs.hyper)
@@ -31,8 +22,8 @@ marginal_likelihood(model::BayesianLinearRegression.BayesianLinearModel, approxi
     log(BayesianLinearRegression.marginal_likelihood(model))
 
 
-function get_formula(bits, saturated_model::BayesianLinearRegression.BayesianLinearModel)
-    vars = findall(bits)
-    new_s = FormulaTerm(saturated_model.s.lhs, StatsModels.MatrixTerm(saturated_model.s.rhs.terms[vars]))
-    return string(new_s)
-end
+# function get_formula(bits, saturated_model::BayesianLinearRegression.BayesianLinearModel)
+#     vars = findall(bits)
+#     new_s = FormulaTerm(saturated_model.s.lhs, StatsModels.MatrixTerm(saturated_model.s.rhs.terms[vars]))
+#     return string(new_s)
+# end
