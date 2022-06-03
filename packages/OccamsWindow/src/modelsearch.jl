@@ -80,7 +80,7 @@ function model_search(saturated_model::StatisticalModel,
         specs,
         marginal_approximation,
         hyperparams,
-        (down_iter, up_iter),
+        (down_iter, up_iter, length(cache)),
         coef_weights)
 end
 

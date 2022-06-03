@@ -3,13 +3,13 @@ struct OccamsWindowSolution{F<:AbstractFloat,S<:AbstractModelSpecs,A<:AbstractMa
     specs::S
     approximation::A
     hyperparams::OccamsWindowParams{F}
-    iters::Tuple{Int, Int}
+    iters::Tuple{Int, Int, Int}
     coef_weights::Vector{F}
  end
  
 function Base.show(io::IO, solution::OccamsWindowSolution)
     (; modelset, specs, approximation, iters, coef_weights) = solution
-    println(io, "Occam's Window executed for $iters[1] + $iters[2] = $(sum(iters)) iterations, using the $approximation approximation to the marginal likelihood.")
+    println(io, "Occam's Window explored $iters[3] models in total for $iters[1] + $iters[2] = $(sum(iters)) iterations, using the $approximation approximation to the marginal likelihood.")
     println(io, "")
     println(io, "Weight: model formula")
     println(io, "---------------------")
