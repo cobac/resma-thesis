@@ -6,6 +6,10 @@
 - It fixed the issue with non-pdet precission matrices
   - I still don't know how they ended-up not being Hermitian
 - ... And I'm quite sure that the math end's up working up to be the same as just putting 0s on the precission matrix
+- But it involves more calculations
+  - I'm rewriting how to specify the confirmatory structure and should be fine
+  - Works OK now, but janky and unnecessary
+  - Mutate-in-place the target matrix
 ** Performance
 - OK...?
 - I'm not sure how it compares to BDgraph yet
