@@ -1,0 +1,21 @@
+* Big refactor
+- Big simplification of the code
+- Implemented a cache of explored models
+- ~x7.5 speed increase
+- From a lot (multiple concurrent GB) of memory allocated to 1GB of total memory
+- 9% of GC time
+- The only thing I can think of to speed up the algorithm is parallelized parts of it
+  - Not gonna prioritize, since I'm going to run the simulations in parallel either way
+* Occam's with GGM
+- Implemented
+- Horrible function to go from BitVector to indices of partial correlations
+- Precission matrix ends up not being Symmetric, but idk why
+  - inv(cov(x))
+* Weirdness with linear models hyper
+* GGM
+** Not counting variances as no. of parameters to calculate the BIC
+** Constrained just 0s really?
+- Removing edges don't affect the other edges?
+- Really??
+* Defense
+- 22 July
