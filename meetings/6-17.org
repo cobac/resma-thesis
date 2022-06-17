@@ -1,0 +1,37 @@
+* Re-using leaps() BICs
+- It returns the Mallow's CP, which is the AIC for glms and then convert to BIC
+* Estimation of constrained GGMs
+- Epskamp et al. (2017)
+  - Where they introduce the psychometrics-y parametrization of the ggm
+- It fixed the issue with non-pdet precission matrices
+  - I still don't know how they ended-up not being Hermitian
+- ... And I'm quite sure that the math end's up working up to be the same as just putting 0s on the precission matrix
+** Performance
+- OK...?
+- I'm not sure how it compares to BDgraph yet
+- Any literature recommendations of sampling approaches?
+  - I don't want to run those simulations myself
+- I'll compare too against the simulation results from Sacha's papers and their model-search algorithms
+- Need to find good hyperparams
+* Hyperparams
+- I'm not sure which hyperparameters to use
+- Some weirdness, I keep getting the more consistent performance when both of them is 0
+  - Which means that it just selects the one with highest marginal
+  - I'm not sure what the resulting set of models is
+  - We loose the /key idea/ of Occam's window... that is a window
+  - But, hey, if it works it works
+- I'm gonna CV hyperparams and use those for the simulations
+* Generating random data
+- Use the procedure from Yin and Li (2011) & epskamp2017generalized
+- I was planning on using a method to generate random posdet matrices and then sparsify
+* Simulations code
+- On the previous run that I did with just the linear models I stored the results in a big multidimensional array
+  - Was fine and then could just map-reduce the results very fast
+  - But wonky to save middle stages and not really flexible to expand
+- Now it's nice!
+* Ready to start running them
+- Only CV hyper-parameters
+- 3 sample sizes (500, 1000, 5000)
+- 3 no. of variables (5, 10, 20)
+- 3 sparsity patterns (100%, 50%, 25%)
+* I'm in ready-to-wrap-up mode
