@@ -2,8 +2,8 @@ using OccamsWindow, Test
 using DataFrames, GLM, Distributions, Random, StatsAPI
 
 const N_TEST = 1000
-p = 10 # no. params
-n = 500 # no. obs
+const p = 10 # no. params
+const n = 500 # no. obs
 
 Random.seed!(1)
 x = rand(Float64, (n, p))
