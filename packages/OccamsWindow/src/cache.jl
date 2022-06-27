@@ -1,8 +1,7 @@
 
 const Cache = Dict{BitVector,Float64}
 
-#TODO: This function name is horrible and should be renamed
-function cached_ml!(bits::BitVector,
+function get_ml!(bits::BitVector,
     specs::AbstractModelSpecs,
     marginal_approximation::AbstractMarginalApproximation,
     cache::Cache)

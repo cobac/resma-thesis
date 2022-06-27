@@ -20,12 +20,12 @@ function model_search(saturated_model::StatisticalModel,
         down_iter += 1
         @debug "\rDown pass iter: $down_iter"
         m = pop_rand!(candidate_models)
-        ml = cached_ml!(m, specs, marginal_approximation, cache)
+        ml = get_ml!(m, specs, marginal_approximation, cache)
         push!(accepted_models, m)
         sum(m) == 1 && continue
         m₀s = sample_submodels(m)
         for m₀ in m₀s
-            B = cached_ml!(m₀, specs, marginal_approximation, cache) - ml
+            B = get_ml!(m₀, specs, marginal_approximation, cache) - ml
             if B > Oᵣ
                 delete!(accepted_models, m)
                 if !(m₀ ∈ candidate_models)
@@ -46,10 +46,10 @@ function model_search(saturated_model::StatisticalModel,
         @debug "\rUp pass iter: $up_iter"
         m = pop_rand!(candidate_models)
         push!(accepted_models, m)
-        ml = cached_ml!(m, specs, marginal_approximation, cache)
+        ml = get_ml!(m, specs, marginal_approximation, cache)
         m₁s = sample_supermodels(m)
         for m₁ in m₁s
-            B = ml - cached_ml!(m₁, specs, marginal_approximation, cache)
+            B = ml - get_ml!(m₁, specs, marginal_approximation, cache)
             if B < Oₗ
                 delete!(accepted_models, m)
                 if !(m₁ ∈ candidate_models)
