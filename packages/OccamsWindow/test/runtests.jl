@@ -31,9 +31,19 @@ end
         @test length(bits) == n
     end
 end
+
 @testset "Modelsets" begin
-    # struct DummyModel <: StatsAPI.StatisticalModel end
-    # OccamsWindow.WeightedModelSet(fill(DummyModel(), 5), fill(0.2, 5))
+    max_set_size = div(N_TEST, 20)
+    m_set = OccamsWindow.ModelSet([OccamsWindow.randombits(p) for i in 1:max_set_size])
+    set_size = length(m_set)
+    @test set_size <= max_set_size
+    @test all(length.(m_set) .== p)
+    @test show(IOBuffer(), m_set) == nothing
+    for i in 1:div(max_set_size, 2)
+        rand_set = OccamsWindow.pop_rand!(m_set)
+        @test length(m_set) == set_size - i
+        @test (rand_set ∈ m_set) == false
+    end
 end
 
 @testset "Submodels" begin
