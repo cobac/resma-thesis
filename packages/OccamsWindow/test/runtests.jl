@@ -24,6 +24,13 @@ saturated_bits = BitVector(fill(true, p))
     @test_throws ErrorException OccamsWindow.marginal_likelihood(saturated_model, OccamsWindow.TestLaplace())
 end
 
+@testset "Random bits" begin
+    for i in 1:div(N_TEST, 20)
+        n = rand(1:30)
+        bits = OccamsWindow.randombits(n)
+        @test length(bits) == n
+    end
+end
 @testset "Modelsets" begin
     # struct DummyModel <: StatsAPI.StatisticalModel end
     # OccamsWindow.WeightedModelSet(fill(DummyModel(), 5), fill(0.2, 5))
