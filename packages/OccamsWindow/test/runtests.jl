@@ -17,7 +17,7 @@ df[!, :y] = y
 saturated_model = lm(term(:y) ~ term(1) + foldl(+, [term(Symbol("x" * string(i)))
                                                     for i in 1:p]), df)
 
-saturated_bits = OccamsWindow.get_coef_bits(saturated_model)
+saturated_bits = BitVector(fill(true, p))
 
 @testset "Marginal approximations" begin
     @test OccamsWindow.marginal_likelihood(saturated_model, BIC()) ≈ -765.5577622644875
@@ -30,29 +30,26 @@ end
 end
 
 @testset "Submodels" begin
-    model = lm(@formula(y ~ x1 + x2), df)
-
-    sub_bits = OccamsWindow.get_coef_bits(saturated_bits, model)
-    super_bits = OccamsWindow.get_coef_bits(saturated_bits, saturated_model)
-
+    sub_bits = BitVector([1, 1, 0, 0, 0, 0, 0, 0, 0, 0])
+    super_bits = saturated_bits
     @test OccamsWindow.issubmodel(sub_bits, sub_bits) == false
 
     @test OccamsWindow.issubmodel(sub_bits, super_bits) == true
     @test OccamsWindow.issubmodel(super_bits, sub_bits) == false
 
-    bits_1 = BitVector([0, 1, 0, 0, 0, 1, 0, 0, 0, 1,])
+    bits_1 = BitVector([0, 1, 0, 0, 0, 1, 0, 0, 0, 1])
     @test OccamsWindow.issubmodel(bits_1, super_bits) == true
     @test OccamsWindow.issubmodel(super_bits, bits_1) == false
     @test OccamsWindow.issubmodel(bits_1, sub_bits) == false
     @test OccamsWindow.issubmodel(sub_bits, bits_1) == false
 
-    bits_2 = BitVector([1, 1, 0, 0, 0, 0, 0, 1, 0, 0,])
+    bits_2 = BitVector([1, 1, 0, 0, 0, 0, 0, 1, 0, 0])
     @test OccamsWindow.issubmodel(bits_2, super_bits) == true
     @test OccamsWindow.issubmodel(super_bits, bits_2) == false
     @test OccamsWindow.issubmodel(bits_2, sub_bits) == false
-    @test OccamsWindow.issubmodel(sub_bits, bits_2) == false
+    @test OccamsWindow.issubmodel(sub_bits, bits_2) == true
 
-    bits_3 = BitVector([0, 0, 0, 0, 0, 0, 0, 1, 0, 0,])
+    bits_3 = BitVector([0, 0, 0, 0, 0, 0, 0, 1, 0, 0])
     @test OccamsWindow.issubmodel(bits_3, super_bits) == true
     @test OccamsWindow.issubmodel(super_bits, bits_3) == false
     @test OccamsWindow.issubmodel(bits_3, sub_bits) == false
