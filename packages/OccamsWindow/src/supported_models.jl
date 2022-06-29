@@ -11,12 +11,14 @@ function model_specs(model::StatisticalModel)
 end
 
 function fit(specs::AbstractModelSpecs, bits::BitVector)
-    throw(ArgumentError(string("fit() function not implemented for specs of type:", typeof(specs))))
+    throw(ArgumentError(string("fit() function not implemented for specs of type: ", typeof(specs))))
 end
 
 # And optionally a marginal_likelihood(model, marginal_approximation) method for each combination.
 
-param_names(specs::AbstractModelSpecs) = specs.names
+function param_names(specs::AbstractModelSpecs)
+    throw(ArgumentError(string("param_names() function not implemented for specs of type: ", typeof(specs))))
+end
 
 supportsleaps(specs::AbstractModelSpecs) = false
 function leaps_data end # if supportsleaps() is true

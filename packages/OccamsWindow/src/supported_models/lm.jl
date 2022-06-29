@@ -5,15 +5,7 @@ struct lmModelSpecs{F<:AbstractFloat,S<:AbstractString} <: AbstractModelSpecs
 end
 
 supportsleaps(specs::Union{lmModelSpecs,blmModelSpecs}) = true
-function leaps_data(specs::Union{lmModelSpecs,blmModelSpecs})
-    x = specs.X
-    has_intercept = false
-    if (all(x[:, 1] .== 1.0))
-        has_intercept = true
-        x = x[:, 2:end]
-    end
-    return x, specs.y, has_intercept
-end
+leaps_data(specs::Union{lmModelSpecs,blmModelSpecs}) = specs.X, specs.y
 
 #response(specs::lmModelSpecs) = specs.y
 
@@ -29,14 +21,19 @@ function model_specs(model::StatsModels.TableRegressionModel)
     if (model_type <: GLM.LinearModel)
         X = modelmatrix(model)
         y = StatsModels.response(model)
-        names = StatsAPI.coefnames(model)
+        # drop intercept name
+        names = StatsAPI.coefnames(model)[2:end]
         return lmModelSpecs(X, y, names)
     else
         error("Model type not supported: ", typeof(model))
     end
 end
 
+param_names(specs::lmModelSpecs) = specs.names
+
 function fit(specs::lmModelSpecs, bits::BitVector)
-    vars = findall(bits)
+    vars = findall(bits) .+ 1
+    # Always fit intercept
+    pushfirst!(vars, 1)
     return GLM.fit(GLM.LinearModel, specs.X[:, vars], specs.y)
 end

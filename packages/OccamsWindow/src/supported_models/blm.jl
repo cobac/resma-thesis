@@ -12,8 +12,13 @@ function model_specs(model::BayesianLinearRegression.BayesianLinearModel)
     return blmModelSpecs(model.s, model.X, model.y, model.hyperparams)
 end
 
+
+param_names(specs::blmModelSpecs) = coefnames(specs.s)[2][2:end]
+
 function fit(specs::blmModelSpecs, bits::BitVector)
-    vars = findall(bits)
+    vars = findall(bits) .+ 1
+    # Always fit intercept
+    pushfirst!(vars, 1)
     new_s = FormulaTerm(specs.s.lhs, StatsModels.MatrixTerm(specs.s.rhs.terms[vars]))
     return BayesianLinearRegression.blm(new_s, specs.X[:, vars], specs.y, specs.hyper)
 end

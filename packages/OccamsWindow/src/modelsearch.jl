@@ -100,12 +100,12 @@ function starting_models(startup::Symbol, specs::AbstractModelSpecs)
         supportsleaps(specs) ||
             throw(ErrorException(string("Unsupported model specification for the leaps-and-bounds algorithm: ",
                 typeof(specs))))
+        #TODO: re-use AIC calculations from leaps()
         R"library(leaps)"
-        model_x, model_y, has_intercept = leaps_data(specs)
+        model_x, model_y = leaps_data(specs)
         @rput model_x
         @rput model_y
-        @rput has_intercept
-        R"startup_bits <- leaps(model_x, model_y, int = has_intercept)$which"
+        R"startup_bits <- leaps(model_x, model_y, int = TRUE)$which"
         @rget startup_bits
         bits₀ = BitVector.(collect(eachrow(startup_bits)))
         map!(bits₀, bits₀) do bits
