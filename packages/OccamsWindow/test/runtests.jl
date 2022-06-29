@@ -1,5 +1,6 @@
 using OccamsWindow, Test
 using DataFrames, GLM, Distributions, Random, StatsAPI
+using OccamsWindow.BayesianLinearRegression
 
 const N_TEST = 1000
 const p = 10 # no. params
@@ -15,7 +16,10 @@ df = DataFrame(x, :auto)
 df[!, :y] = y
 
 saturated_lm = lm(term(:y) ~ term(1) + foldl(+, [term(Symbol("x" * string(i)))
-                                                    for i in 1:p]), df)
+                                                 for i in 1:p]), df)
+
+saturated_blm = blm(term(:y) ~ term(1) + foldl(+, [term(Symbol("x" * string(i)))
+                                                   for i in 1:p]), df)
 
 saturated_bits = BitVector(fill(true, p))
 
@@ -94,6 +98,22 @@ end
             @test !any(eachcol(modelmatrix(model_lm)[:, 2:end]) .== (ones(n),))
         end
     end #lm
+
+    @testset "blm" begin
+        specs_blm = OccamsWindow.model_specs(saturated_blm)
+        @test length(OccamsWindow.param_names(specs_blm)) == p
+        @test length(specs_blm.y) == n
+        @test size(specs_blm.X, 1) == n
+        @test size(specs_blm.X, 2) == p + 1
+
+        for _ in 1:N_TEST
+            bits_blm = OccamsWindow.randombits(p) |> BitVector
+            model_blm = OccamsWindow.fit(specs_blm, bits_blm)
+            # Intercept always included
+            @test all(modelmatrix(model_blm)[:, 1] .== 1)
+            @test !any(eachcol(modelmatrix(model_blm)[:, 2:end]) .== (ones(n),))
+        end
+    end #blm
 end
 @testset "Model search base" begin
     for i in 1:N_TEST
