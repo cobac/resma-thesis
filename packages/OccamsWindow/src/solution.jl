@@ -9,7 +9,7 @@ struct OccamsWindowSolution{F<:AbstractFloat,S<:AbstractModelSpecs,A<:AbstractMa
  
 function Base.show(io::IO, solution::OccamsWindowSolution)
     (; modelset, specs, approximation, iters, coef_weights) = solution
-    println(io, "Occam's Window explored $iters[3] models in total for $iters[1] + $iters[2] = $(sum(iters)) iterations, using the $approximation approximation to the marginal likelihood.")
+    println(io, "Occam's Window explored $(iters[3]) models in total for $(iters[1]) + $(iters[2]) = $(iters[1]+iters[2]) iterations, using the $approximation approximation to the marginal likelihood.")
     println(io, "")
     println(io, "Weight: model formula")
     println(io, "---------------------")
