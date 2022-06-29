@@ -98,8 +98,7 @@ function starting_models(startup::Symbol, specs::AbstractModelSpecs)
         bits₀ = (BitVector(randombits(no_params)),)
     elseif startup == :leaps
         supportsleaps(specs) ||
-            throw(ErrorException(string("Unsupported model specification for the leaps-and-bounds algorithm: ",
-                typeof(specs))))
+            throw(ArgumentError("Unsupported model specification for the leaps-and-bounds algorithm: $(typeof(specs))"))
         #TODO: re-use AIC calculations from leaps()
         R"library(leaps)"
         model_x, model_y = leaps_data(specs)

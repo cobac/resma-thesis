@@ -30,8 +30,12 @@ end
 
 
 @testset "Marginal approximations" begin
-    @test OccamsWindow.marginal_likelihood(saturated_lm, BIC()) ≈ -765.5577622644875
-    @test_throws ErrorException OccamsWindow.marginal_likelihood(saturated_lm, OccamsWindow.TestLaplace())
+    @test OccamsWindow.marginal_likelihood(OccamsWindow.model_specs(saturated_lm),
+        saturated_bits,
+        BIC()) ≈ -765.5577622644875
+    @test_throws MethodError OccamsWindow.marginal_likelihood(OccamsWindow.model_specs(saturated_lm),
+        saturated_bits,
+        OccamsWindow.TestLaplace())
 end
 
 @testset "Random bits" begin
