@@ -5,7 +5,7 @@ struct lmModelSpecs{F<:AbstractFloat,S<:AbstractString} <: AbstractModelSpecs
 end
 
 supportsleaps(specs::Union{lmModelSpecs,blmModelSpecs}) = true
-leaps_data(specs::Union{lmModelSpecs,blmModelSpecs}) = specs.X, specs.y
+leaps_data(specs::Union{lmModelSpecs,blmModelSpecs}) = specs.X[:, 2:end], specs.y
 
 #response(specs::lmModelSpecs) = specs.y
 

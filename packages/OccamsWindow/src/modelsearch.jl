@@ -108,11 +108,8 @@ function starting_models(startup::Symbol, specs::AbstractModelSpecs)
         R"startup_bits <- leaps(model_x, model_y, int = TRUE)$which"
         @rget startup_bits
         bits₀ = BitVector.(collect(eachrow(startup_bits)))
-        map!(bits₀, bits₀) do bits
-            append!([true], bits)
-        end
-        bits₀
     else
         throw(ArgumentError(string("Unrecognized startup option: ", startup)))
     end
+    return bits₀
 end
