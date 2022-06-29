@@ -14,7 +14,7 @@ y = X * β .+ rand(Normal(), n)
 df = DataFrame(x, :auto)
 df[!, :y] = y
 
-saturated_model = lm(term(:y) ~ term(1) + foldl(+, [term(Symbol("x" * string(i)))
+saturated_lm = lm(term(:y) ~ term(1) + foldl(+, [term(Symbol("x" * string(i)))
                                                     for i in 1:p]), df)
 
 saturated_bits = BitVector(fill(true, p))
@@ -77,7 +77,7 @@ end
 
 @testset "Model search base" begin
     for i in 1:N_TEST
-        model_search(saturated_model, BIC())
+        model_search(saturated_lm, BIC())
         @test true == true
     end
 end 
