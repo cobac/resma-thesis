@@ -15,6 +15,10 @@ end
 
 param_names(specs::blmModelSpecs) = coefnames(specs.s)[2][2:end]
 
+# TODO: Don't fit for every model
+marginal_likelihood(specs::blmModelSpecs, bits::BitVector, approximation::Analytical) =
+    log(BayesianLinearRegression.marginal_likelihood(fit(specs, bits)))
+
 function fit(specs::blmModelSpecs, bits::BitVector)
     vars = findall(bits) .+ 1
     # Always fit intercept
@@ -22,13 +26,3 @@ function fit(specs::blmModelSpecs, bits::BitVector)
     new_s = FormulaTerm(specs.s.lhs, StatsModels.MatrixTerm(specs.s.rhs.terms[vars]))
     return BayesianLinearRegression.blm(new_s, specs.X[:, vars], specs.y, specs.hyper)
 end
-
-marginal_likelihood(model::BayesianLinearRegression.BayesianLinearModel, approximation::Analytical) =
-    log(BayesianLinearRegression.marginal_likelihood(model))
-
-
-# function get_formula(bits, saturated_model::BayesianLinearRegression.BayesianLinearModel)
-#     vars = findall(bits)
-#     new_s = FormulaTerm(saturated_model.s.lhs, StatsModels.MatrixTerm(saturated_model.s.rhs.terms[vars]))
-#     return string(new_s)
-# end

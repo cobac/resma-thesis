@@ -31,6 +31,8 @@ end
 
 param_names(specs::lmModelSpecs) = specs.names
 
+marginal_likelihood(specs::lmModelSpecs, bits::BitVector, approximation::BIC) = -bic(fit(specs, bits)) / 2
+
 function fit(specs::lmModelSpecs, bits::BitVector)
     vars = findall(bits) .+ 1
     # Always fit intercept

@@ -4,23 +4,39 @@
 
 abstract type AbstractModelSpecs end
 
-# They also need to implement the following functions if the defaults don't work
-
 function model_specs(model::StatisticalModel)
-    throw(ArgumentError(string("Unsupporded model type: ", typeof(model))))
+    throw(ArgumentError("Unsupported model type: $(typeof(model))"))
 end
 
-function fit(specs::AbstractModelSpecs, bits::BitVector)
-    throw(ArgumentError(string("fit() function not implemented for specs of type: ", typeof(specs))))
+# They also need to implement the following functions
+
+"""
+    marginal_likelihood(specs::AbstractModelSpecs, bits::BitVector, marginal_approximation::AbstractMarginalApproximation)
+
+Compute the marginal likelihood of the model codified by `bits`.
+"""
+function marginal_likelihood(specs::AbstractModelSpecs,
+    bits::BitVector,
+    marginal_approximation::AbstractMarginalApproximation)
+    throw(ArgumentError("Unsupported combination of model specs ($(typeof(specs))) and marginal approximation ($(typeof(marginal_approximation)))."))
 end
 
-# And optionally a marginal_likelihood(model, marginal_approximation) method for each combination.
+"""
+    param_names(specs::AbstractModelSpecs)
 
+Returns a vector of strings with the parameter names.
+"""
 function param_names(specs::AbstractModelSpecs)
-    throw(ArgumentError(string("param_names() function not implemented for specs of type: ", typeof(specs))))
+    throw(ArgumentError("param_names() function not implemented for specs of type: $(typeof(specs))"))
 end
 
 supportsleaps(specs::AbstractModelSpecs) = false
+
+"""
+    leapsdata
+
+Returns a tuple with the predictors matrix and response vector.
+"""
 function leaps_data end # if supportsleaps() is true
 
 include("supported_models/blm.jl")

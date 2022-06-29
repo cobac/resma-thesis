@@ -6,7 +6,7 @@ function get_ml!(bits::BitVector,
     marginal_approximation::AbstractMarginalApproximation,
     cache::Cache)
     haskey(cache, bits) && return cache[bits]
-    ml = marginal_likelihood(fit(specs, bits), marginal_approximation)
+    ml = marginal_likelihood(specs, bits, marginal_approximation)
     cache[bits] = ml
     return ml
 end
