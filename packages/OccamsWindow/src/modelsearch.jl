@@ -13,7 +13,7 @@ function model_search(saturated_model::StatisticalModel,
     # 𝓐  from Madigan & Raftery (1994)
     accepted_models = ModelSet()
     # 𝒞 from Madigan & Raftery (1994)
-    candidate_models = ModelSet(starting_models(startup::Symbol, no_params, specs::AbstractModelSpecs))
+    candidate_models = ModelSet(starting_models(startup, specs))
     # Down pass
     down_iter = 0
     while !isempty(candidate_models)
@@ -84,7 +84,8 @@ function model_search(saturated_model::StatisticalModel,
         coef_weights)
 end
 
-function starting_models(startup::Symbol, no_params::Int, specs::AbstractModelSpecs)
+function starting_models(startup::Symbol, specs::AbstractModelSpecs)
+    no_params = length(param_names(specs))
     if startup == :saturated
         bits₀ = (BitVector(fill(true, no_params)),)
     elseif startup == :random
