@@ -20,8 +20,8 @@ saturated_lm = lm(term(:y) ~ term(1) + foldl(+, [term(Symbol("x" * string(i)))
 saturated_bits = BitVector(fill(true, p))
 
 @testset "Marginal approximations" begin
-    @test OccamsWindow.marginal_likelihood(saturated_model, BIC()) ≈ -765.5577622644875
-    @test_throws ErrorException OccamsWindow.marginal_likelihood(saturated_model, OccamsWindow.TestLaplace())
+    @test OccamsWindow.marginal_likelihood(saturated_lm, BIC()) ≈ -765.5577622644875
+    @test_throws ErrorException OccamsWindow.marginal_likelihood(saturated_lm, OccamsWindow.TestLaplace())
 end
 
 @testset "Random bits" begin
@@ -75,6 +75,26 @@ end
     @test OccamsWindow.issubmodel(bits_2, bits_3) == false
 end
 
+@testset "Supported models" begin
+
+    @testset "unsupported" begin end
+
+    @testset "lm" begin
+        specs_lm = OccamsWindow.model_specs(saturated_lm)
+        @test length(OccamsWindow.param_names(specs_lm)) == p
+        @test length(specs_lm.y) == n
+        @test size(specs_lm.X, 1) == n
+        @test size(specs_lm.X, 2) == p + 1
+
+        for _ in 1:N_TEST
+            bits_lm = OccamsWindow.randombits(p) |> BitVector
+            model_lm = OccamsWindow.fit(specs_lm, bits_lm)
+            # Intercept always included
+            @test all(modelmatrix(model_lm)[:, 1] .== 1)
+            @test !any(eachcol(modelmatrix(model_lm)[:, 2:end]) .== (ones(n),))
+        end
+    end #lm
+end
 @testset "Model search base" begin
     for i in 1:N_TEST
         model_search(saturated_lm, BIC())
