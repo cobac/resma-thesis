@@ -25,7 +25,7 @@ function model_specs(model::StatsModels.TableRegressionModel)
         names = StatsAPI.coefnames(model)[2:end]
         return lmModelSpecs(X, y, names)
     else
-        error("Model type not supported: ", typeof(model))
+        throw(ArgumentError("Model type not supported:$(typeof_model)"))
     end
 end
 
