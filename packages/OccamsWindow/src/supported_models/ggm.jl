@@ -43,8 +43,6 @@ function marginal_likelihood(specs::GGMModelSpecs, bits::BitVector, approximatio
         pcors = get_indices(edge, size(specs.x, 2))
         set_zeros!(target, pcors)
     end
-    #TODO: DELETE
-    issymmetric(target) || throw(ArgumentError("Target matrix is not symmetric."))
 
     # x_ggm = Ref(specs.x)
     x_ggm = specs.x
