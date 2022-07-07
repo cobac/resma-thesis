@@ -1,6 +1,6 @@
 using OccamsWindow, Test
 using DataFrames, GLM, Distributions, Random, StatsAPI
-using OccamsWindow.BayesianLinearRegression
+using OccamsWindow.BayesianLinearRegression, OccamsWindow.SimpleGGM
 
 const N_TEST = 500
 const p = 10 # no. params
@@ -158,6 +158,7 @@ end
         end
     end #lm
 
+    # TODO: Test analytical blm (after not fitting for every blm)
     # @testset "blm" begin
     #     @testset "Spec generation" begin
     #         specs_blm = OccamsWindow.model_specs(saturated_blm)
@@ -175,4 +176,36 @@ end
     #         end
     #     end
     # end #blm
+
+    @testset "ggm" begin
+        @testset "Spec generation" begin
+            df = DataFrame(x, :auto)
+            saturated_ggm = ggm(df)
+            specs_ggm = OccamsWindow.model_specs(saturated_ggm)
+            @test length(specs_ggm.names) == binomial(p, 2)
+            @test size(specs_ggm.x, 1) == n
+            @test size(specs_ggm.x, 2) == p
+        end
+
+        @testset "Starting models" begin
+            @test_throws ArgumentError OccamsWindow.starting_models(:not_defined, specs_ggm)
+            init_saturated_ggm = OccamsWindow.starting_models(:saturated, specs_ggm)[1]
+            @test length(init_saturated_ggm) == binomial(p, 2)
+            @test all(init_saturated_ggm .== 1)
+            init_random_ggm = OccamsWindow.starting_models(:random, specs_ggm)
+            @test length(init_random_ggm) == 500
+            @test all(length.(init_random_ggm) .== binomial(p, 2))
+            @test_throws ArgumentError OccamsWindow.starting_models(:leaps, specs_ggm)
+        end
+
+        @testset "Model specification" begin
+            @test_throws ArgumentError OccamsWindow.get_indices(10, 2)
+            regex = r"\D*(\d+)\D*(\d+)\D*"
+            for param_i in eachindex(specs_ggm.names)
+                names = match(regex, specs_ggm.names[param_i]) |> collect
+                @test all(OccamsWindow.get_indices(param_i, p) .==
+                          parse.(Int, (string.(names))))
+            end
+        end
+    end #ggm
 end

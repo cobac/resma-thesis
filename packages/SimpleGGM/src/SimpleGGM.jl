@@ -1,8 +1,10 @@
 module SimpleGGM
-using Distributions, LinearAlgebra, StatsBase, StatsAPI, DataFrames
-import StatsAPI: fit, bic, coefnames
+using Distributions, LinearAlgebra, StatsBase, StatsAPI, DataFrames, PDMats
+import StatsAPI: bic, fit, coefnames
 
-export ggm, fit, bic, coefnames
+export ggm, bic, coefnames, fit
+
+# Epskamp et al. (2017). doi: 10.1007/s11336-017-9557-x
 
 struct GGM{M<:AbstractMatrix,D<:AbstractMvNormal} <: StatisticalModel
     x::M
@@ -15,28 +17,36 @@ function ggm(df::AbstractDataFrame, target::Union{Nothing,AbstractMatrix} = noth
     if isnothing(target)
         target = ones(size(x, 2), size(x, 2))
     end
-    return fit(GGM, x, target, names(df))
+    return fit(GGM, x, target, expand_names(names(df)))
 end
 
-function StatsBase.fit(::Type{GGM},
+function StatsAPI.fit(::Type{GGM},
     x::AbstractMatrix,
     target::AbstractMatrix,
     names::AbstractVector{<:AbstractString})
-    issymmetric(target) || error("Target matrix is not symmetric.")
+    issymmetric(target) || throw(ArgumentError("Target matrix is not symmetric."))
     size(target) == (size(x, 2), size(x, 2)) ||
-        error("Mismatched dimensions between covariance and target matrices.")
-    Κ = inv(Hermitian(cov(x, corrected = false))) .* target
-    # TODO: Assumes centered variables
+        throw(ArgumentError("Mismatched dimensions between covariance and target matrices."))
+    S = inv(PDMat(cov(x)))
+    Κ = S .* target
     dist = MvNormalCanon(Κ)
     return GGM(x, dist, names)
 end
 
-StatsAPI.bic(model::GGM, x::AbstractMatrix) = length(model.names) * log(size(model.x, 1)) -
-                                              2 * loglikelihood(model.dist, x')
+function generate_dist(Κ::AbstractMatrix, target::AbstractMatrix)
+    MvNormalCanon(Κ.*target)
 
-function StatsAPI.coefnames(model::GGM)
-    it = Iterators.product(model.names, model.names)
-    return [string(i, "--", j) for (j, i) in it if i != j]
 end
 
-end # module
+StatsAPI.bic(model::GGM) = length(model.names) * log(size(model.x, 1)) -
+                           2 * loglikelihood(model.dist, model.x')
+
+function expand_names(names::Vector{<:AbstractString})
+    it = Iterators.product(names, names) |> collect
+    is = Tuple.(vec(collect(CartesianIndices(size(it)))))
+    return [string(it[i, j][1], "--", it[i, j][2]) for (j, i) in is if i < j]
+end
+
+StatsAPI.coefnames(model::GGM) = model.names
+
+end
