@@ -3,7 +3,13 @@ struct GGMModelSpecs{M<:AbstractMatrix,S<:AbstractString} <: AbstractModelSpecs
     names::Vector{S}
 end
 
-model_specs(model::SimpleGGM.GGM) = GGMModelSpecs(model.x, model.names)
+function model_specs(model::SimpleGGM.GGM)
+    x_ggm = model.x
+    R"options(warn = -1)"
+    R"library(psychonetrics)"
+    @rput x_ggm
+    GGMModelSpecs(x_ggm, model.names)
+end
 
 """
     get_indices(n, no_vars)
@@ -44,17 +50,19 @@ function marginal_likelihood(specs::GGMModelSpecs, bits::BitVector, approximatio
         set_zeros!(target, pcors)
     end
 
-    # x_ggm = Ref(specs.x)
-    x_ggm = specs.x
-    @rput x_ggm
     @rput target
 
-    R"library(psychonetrics)"
     R"model <- ggm(x_ggm, omega = target) |> runmodel()"
     R"bic <- model@fitmeasures$bic"
     @rget bic
 
-    return -bic/2
+    return -bic / 2
 end
+
+function marginal_likelihood(specs::GGMModelSpecs, bits::BitVector, approximation::FakeMarginal)
+    R"""if (!exists("x_ggm")) stop("Data matrix not available in the R environment.")"""
+    rand(append!(fill(0.2, 10), 0.8))
+end
+
 
 param_names(specs::GGMModelSpecs) = specs.names
