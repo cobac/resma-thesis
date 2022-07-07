@@ -21,6 +21,9 @@ function marginal_likelihood(specs::AbstractModelSpecs,
     throw(ArgumentError("Unsupported combination of model specs ($(typeof(specs))) and marginal approximation ($(typeof(marginal_approximation)))."))
 end
 
+marginal_likelihood(specs::AbstractModelSpecs, bits::BitVector, approximation::FakeMarginal) =
+    rand(append!(fill(0.2, 10), 0.8))
+
 """
     param_names(specs::AbstractModelSpecs)
 

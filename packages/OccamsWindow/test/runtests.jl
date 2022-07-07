@@ -36,7 +36,14 @@ end
     @test_throws MethodError OccamsWindow.marginal_likelihood(OccamsWindow.model_specs(saturated_lm),
         saturated_bits,
         OccamsWindow.TestLaplace())
+
+    @testset "Fake marginal approximation" begin
+        solution_fake = model_search(saturated_lm, OccamsWindow.FakeMarginal(),
+            hyperparams = OccamsWindowParams(startup = :saturated))
+        @test true
+    end
 end
+
 
 @testset "Random bits" begin
     for i in 1:div(N_TEST, 20)
@@ -178,10 +185,10 @@ end
     # end #blm
 
     @testset "ggm" begin
+        df = DataFrame(x, :auto)
+        saturated_ggm = ggm(df)
+        specs_ggm = OccamsWindow.model_specs(saturated_ggm)
         @testset "Spec generation" begin
-            df = DataFrame(x, :auto)
-            saturated_ggm = ggm(df)
-            specs_ggm = OccamsWindow.model_specs(saturated_ggm)
             @test length(specs_ggm.names) == binomial(p, 2)
             @test size(specs_ggm.x, 1) == n
             @test size(specs_ggm.x, 2) == p
@@ -207,5 +214,11 @@ end
                           parse.(Int, (string.(names))))
             end
         end
+
+        @testset "Model search" begin
+            solution_ggm = model_search(saturated_ggm, OccamsWindow.FakeMarginal())
+            @test true
+        end
+
     end #ggm
 end
