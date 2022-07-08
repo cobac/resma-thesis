@@ -1,0 +1,37 @@
+* R
+- ggm R package is broken with R4.2
+- Using psychonetrics
+* Glib errors
+- Julia ships an outdated version of glibcxx which Rcpp uses
+- R packages that depend on Rcpp are broken to use with Julia currently
+- I had to use a different julia version that is compiled agains the glibcxx of my distribution instead
+  - Instead of their bundled binaries
+* Psychonetrics benchmarks
+- ML    :: 105ms
+- FIML  :: 118ms
+- WLS   :: 500ms
+- DWLS  :: 500ms
+* GGM performance
+- Using psychonetrics
+- ~40 mins per run with 5k
+  - 50 min with 1k
+  - whole night was not done at 9000 down-iterations
+- 0% gc time
+- 130MiB allocated
+- as fast as it gets without re-using calculations
+  - no time
+** Speed
+- vs bggm: bggm 1/4 of a sec
+- vs bdgraph 1.2 sec
+  - With rjmcmc it is 1.5s
+  - bdgraph with 5k iterations
+** What was the issue with BDgraph?
+** I feel like what I've done without optimized marginal calculations is useless
+* Simulations
+- Single-threaded it'll take me 7 full days
+- Get it down to ~3 with parallel
+  - If <1h per run
+  - Tonight disproved it...
+    - Break the run after ~2h running???
+- Access to lisa?
+
