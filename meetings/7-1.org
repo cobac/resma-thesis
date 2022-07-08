@@ -1,0 +1,65 @@
+* Linear models with implied intercepts
+- Took a bit of refactor
+- It's the best approach
+- Reproducible with BMA?
+  - Not really...
+  - In terms of results it's simmilar
+  - We get most of the times a single model with high probability and a few with very small
+  - They report only 1 model (which tends to be the same)
+  - I don't think their code follows the algorithm as described in the papers
+    - But idk it's hard to understand their code
+  - So I don't think we are computationally reproducible... but it is what it is
+  - At this point I'd be very surprises if there is a bug in my implementation
+
+* Tests
+- I had fell quite behind... and I couldn't refactor without them
+
+* Relatively Big refactor
+- Before before I re-calculated each marginal likelihoods for every comparison
+- Last refactor I implemented a cache so we fitted each model once
+- Not we don't fit models, just calculate marginals directly
+  - Saves allocations of the model objects
+  - It was an issue for GGMs, as I had to invert a matrix per model fitted
+  - Not implemented for linear models, but should be trivial and not-necessary
+
+* GGM
+- Reverted back to just putting 0s in the precision matrix
+  - Unnecessary allocations with the psychometric specification
+    - And I don't think those are the ML estimates
+  - But the matrices are not posdef
+    - (I don't think they were either before but I wasn't checking)
+    - First eigen value can end-up being 0
+      - Julia dispatch weird because the cholesky implementation calls LAPACK
+      - Thought it was floating point errors
+- Went back a different specification of the ggm but instead of saches to Padmanabhan, N., & O'Connell, R. (2016) http://dx.doi.org/10.1093/mnras/stw1042
+  - With Sacha's I have to invert a matrix each time
+  - But again, that's specification not estimation
+- A lot of literature on multiple algorithms to estimate the ML
+  - The sample cov-mat doesn't seem to be the MLE for the saturated????
+    - I don't think this is true
+  - ggm R package uses two algorithms
+    - Not trivial to implement
+  - sacha/psychometrics not in the papers and I don't follow their source code
+- So... I'm just gonna use ggm or psychonetrics from R to get the ML estimates
+  - Meh but
+
+* Simulations
+- Williams & Sacha papers use the same simulation conditions
+- Williams runs BDgraph too
+- If their supplementary materials are good (issues with login) I won't have to run those sims
+- Everything ready to run
+  - Less than 1 day
+
+* State of the thesis
+- 3 weeks
+- Writing... not prioritized
+  - In the thesis I'm not gonna write all of the detours and details of the scenic route
+  - Very straightforward
+- I've checked that everything is ready to run simulations
+- Schedule defense on the 22nd
+  - email of the secretariaat by any chance?
+    - Other departmends have on the website but not the methods
+- Submission, whenever it's done, hopefully a bit earlier than defense so it's easy to grade before Aug
+- If not, I don't need the title too fast
+
+
