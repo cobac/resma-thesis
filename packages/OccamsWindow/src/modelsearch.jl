@@ -104,7 +104,12 @@ function starting_models(startup::Symbol, specs::AbstractModelSpecs)
         model_x, model_y = leaps_data(specs)
         @rput model_x
         @rput model_y
-        R"startup_bits <- leaps(model_x, model_y, int = TRUE)$which"
+        R"""startup_bits <- summary(regsubsets(model_x,
+                                    model_y,
+                                    nbest = 150,
+                                    nvmax = ncol(model_x),
+                                    method = "exhaustive",
+                                    really.big = TRUE))$which[, -1]""" # drop intercept column
         @rget startup_bits
         bits₀ = BitVector.(collect(eachrow(startup_bits)))
     else
