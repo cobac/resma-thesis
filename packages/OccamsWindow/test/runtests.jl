@@ -101,7 +101,12 @@ end
 
 @testset "Caching" begin end
 
-@testset "Solutions" begin end
+@testset "Solutions" begin
+    solution_lm = model_search(saturated_lm, BIC(),
+        hyperparams = OccamsWindowParams(startup = :leaps),
+         max_time = 1E-20)
+    @test solution_lm.timeout
+end
 
 @testset "Supported models" begin
 

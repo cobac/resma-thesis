@@ -1,10 +1,11 @@
 
 function model_search(saturated_model::StatisticalModel,
     marginal_approximation::AbstractMarginalApproximation;
-    hyperparams::OccamsWindowParams = OccamsWindowParams())
-
+    hyperparams::OccamsWindowParams = OccamsWindowParams(),
+    max_time = 7200 #s = 2h
+)
+    t₀ = time()
     specs = model_specs(saturated_model)
-    no_params = length(param_names(specs))
     (; Oᵣ, Oₗ, startup) = hyperparams
 
     # All explored models
@@ -14,8 +15,11 @@ function model_search(saturated_model::StatisticalModel,
     accepted_models = ModelSet()
     # 𝒞 from Madigan & Raftery (1994)
     candidate_models = ModelSet(starting_models(startup, specs))
-    # Down pass
+
     down_iter = 0
+    up_iter = 0
+
+    # Down pass
     while !isempty(candidate_models)
         down_iter += 1
         @debug "\rDown pass iter: $down_iter"
@@ -35,10 +39,21 @@ function model_search(saturated_model::StatisticalModel,
                 push!(candidate_models, m₀)
             end
         end
+        t = time()
+        if (t - t₀) > max_time
+            @debug "\rReturning due to timeout after $down_iter down iterations."
+            return make_solution(accepted_models,
+                cache,
+                specs,
+                hyperparams,
+                down_iter,
+                up_iter,
+                marginal_approximation,
+                true) # timeout
+        end
     end # Down pass
 
     # Up pass
-    up_iter = 0
     candidate_models = accepted_models
     accepted_models = ModelSet()
     while !isempty(candidate_models)
@@ -59,29 +74,27 @@ function model_search(saturated_model::StatisticalModel,
                 push!(candidate_models, m₁)
             end
         end
-    end # Up pass
-
-    length(accepted_models) == 0 &&
-        error("The model search did not accept any model.")
-
-    out_bits = collect(accepted_models)
-    out_modelset = WeightedModelSet(out_bits, cache)
-
-    coef_weights = zeros(no_params)
-    for bit in UnitRange(1, no_params)
-        for model in eachindex(out_bits)
-            if out_bits[model][bit]
-                coef_weights[bit] += out_modelset.weights[model]
-            end
+        t = time()
+        if (t - t₀) > max_time
+            @debug "\rReturning due to timeout after $down_iter down iterations and $up_iter up iterations."
+            return make_solution(accepted_models,
+                cache,
+                specs,
+                hyperparams,
+                down_iter,
+                up_iter,
+                marginal_approximation,
+                true) # timeout
         end
-    end
-
-    return OccamsWindowSolution(out_modelset,
+    end # Up pass
+    return make_solution(accepted_models,
+        cache,
         specs,
-        marginal_approximation,
         hyperparams,
-        (down_iter, up_iter, length(cache)),
-        coef_weights)
+        down_iter,
+        up_iter,
+        marginal_approximation,
+        false) # no timeout
 end
 
 function starting_models(startup::Symbol, specs::AbstractModelSpecs)
