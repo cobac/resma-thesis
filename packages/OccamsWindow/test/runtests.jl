@@ -164,6 +164,7 @@ end
                 false_is = findall(false_bits)
                 true_neg[i] = all(solution_lm.coef_weights[false_is] .< 0.5)
                 @test true
+                @test sum(solution_lm.modelset.weights) ≈ 1
             end
             @test mean(true_pos) > 0.9
             @test mean(true_neg) > 0.1
@@ -222,6 +223,7 @@ end
 
         @testset "Model search" begin
             solution_ggm = model_search(saturated_ggm, OccamsWindow.FakeMarginal())
+            @test sum(solution_ggm.modelset.weights) ≈ 1
             @test true
         end
 
