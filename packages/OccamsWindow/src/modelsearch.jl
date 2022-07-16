@@ -42,6 +42,10 @@ function model_search(saturated_model::StatisticalModel,
         t = time()
         if (t - t₀) > max_time
             @debug "\rReturning due to timeout after $down_iter down iterations."
+            if isempty(accepted_models)
+                accepted_models = candidate_models
+                @debug "\rThe accepted models set was empty."
+            end
             return make_solution(accepted_models,
                 cache,
                 specs,
@@ -77,6 +81,10 @@ function model_search(saturated_model::StatisticalModel,
         t = time()
         if (t - t₀) > max_time
             @debug "\rReturning due to timeout after $down_iter down iterations and $up_iter up iterations."
+            if isempty(accepted_models)
+                accepted_models = candidate_models
+                @debug "\rThe accepted models set was empty."
+            end
             return make_solution(accepted_models,
                 cache,
                 specs,
