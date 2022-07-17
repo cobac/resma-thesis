@@ -1,0 +1,20 @@
+name = "sims"
+uuid = "4e7970e2-b009-4747-a1d4-46ec310c6c67"
+authors = ["Coba <coba@cobac.eu>"]
+version = "0.1.0"
+
+[deps]
+BayesianLinearRegression = "9127f14b-3ca4-41fa-9dd4-378675d471c3"
+BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+GLM = "38e38edf-8417-5370-95a0-9cbb8c7f171a"
+JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+OccamsWindow = "37daae3a-a82d-4c15-8093-19d44927d00f"
+ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
+RCall = "6f49c342-dc21-5d91-9882-a32aef131414"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+SimpleGGM = "0fc5b02e-c925-4244-876b-518b392e1b9a"
+StatsAPI = "82ae8749-77ed-4fe6-ae5f-f523153014b0"
