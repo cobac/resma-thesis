@@ -1,0 +1,11 @@
+This repository contains all the code and document files from my [[https://github.com/cobac/resma-thesis/blob/main/products/thesis/thesis.pdf][Master's thesis]]. It is possible to audit the development of this project through the git history of this repository (e.g. meeting minutes, old code).
+
+All of our results and code are available in this repository.
+
+The repository is structured in the following way:
+
+- =products/= :: Contains the research proposal and the thesis document, as well as feedback for different versions of both documents.
+- =sims/= :: Contains the analysis scripts and results. To access our results unarchive the =output.tar.gz= archive into the =output= folder
+	- All code is written in the Julia programming language. To run a script /instantiate/ the =Manifest.toml= of the corresponding folder to guarantee that the correct versions of all dependencies are used (do not update the packages!). More info about reproducing Julia projects at https://pkgdocs.julialang.org/v1/environments/#Using-someone-else's-project .
+
+All of our results can be replicated by ensuring that Julia (>1.6) is installed and running the =Makefile= from the =sims= folder. It is also possible to partially run the simulations or to only run the analysis script. 
