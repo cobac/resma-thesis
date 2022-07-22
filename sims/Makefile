@@ -6,7 +6,7 @@ GGM_SIMS_SOURCE = src/ggm_sims.jl
 
 .PHONY: all instantiate lm_sims
 
-all: instantiate lm_sims ggm_sims
+all: instantiate lm_sims ggm_sims plots
 
 instantiate: 
 		$(JULIA) -e "using Pkg; Pkg.instantiate()" 
@@ -46,3 +46,7 @@ output/Occams.jld2: $(GGM_SIMS_SOURCE)
 		$(JULIA) $(JLFLAGS) $(GGM_SIMS_SOURCE) Occams
 
 
+# - Plots
+
+plots: src/analysis.jl # lm_sims ggm_sims
+		$(JULIA) src/analysis.jl
