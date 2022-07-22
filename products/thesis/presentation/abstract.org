@@ -1,0 +1,6 @@
+When we use a statistical model to make inferences we often ignore the uncertainty derived from the model selection process, which can lead to overconfident inferences. Bayesian model averaging allows us to combine the uncertainty of multiple models to make inferences, but it requires a set of candidate models to consider. Exploring the space of possible models is difficult without strong theoretical justifications, and it is specially hard when the model space grows exponentially as the number of variables increases. This is the case with network models such as the Gaussian graphical model.
+
+Occam's window is a model search algorithm that generates a list of candidate models, and it was designed with Bayesian model averaging in mind. During my thesis I have develop a general implementation of Occam's window that works with any statistical model, and I have conducted a simulation study to benchmark its performance with Gaussian graphical models.
+
+Key words: Bayesian inference, Bayesian model averaging, Occam's window, Gaussian graphical model, model search algorithms
+ 
