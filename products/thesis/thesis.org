@@ -23,7 +23,7 @@
 #+LATEX_HEADER: Supervised by: \\% 
 #+LATEX_HEADER: \hspace{.65cm} Maarten Marsman
 #+LATEX_HEADER: \hphantom{1cm} }
-#+LATEX_HEADER: \duedate{Some day of August, 2022}
+#+LATEX_HEADER: \duedate{16th of August, 2022}
 
 #+LATEX_HEADER: \abstract{
 #+LATEX_HEADER: When we select a statistical model and use it to make inferences about its parameters, we usually ignore the uncertainty derived from the model selection process, leading to overconfident inferences. There are techniques that address this, like Bayesian model averaging (BMA). However, when the space of possible models is vast, such as with graphical models that are popular in psychology, it is not evident how to efficiently find the most relevant models to average over with BMA. Occam's window is a model search algorithm that explores the space of possible models, and it is designed to generate a set of candidate models for BMA.
