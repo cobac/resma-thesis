@@ -28,16 +28,10 @@
 #+LATEX_HEADER: \abstract{
 #+LATEX_HEADER: When we select a statistical model and use it to make inferences about its parameters, we usually ignore the uncertainty derived from the model selection process, leading to overconfident inferences. There are techniques that address this, like Bayesian model averaging (BMA). However, when the space of possible models is vast, such as with graphical models that are popular in psychology, it is not evident how to efficiently find the most relevant models to average over with BMA. Occam's window is a model search algorithm that explores the space of possible models, and it is designed to generate a set of candidate models for BMA.
 #+LATEX_HEADER:
-#+LATEX_HEADER: The goal of this project was to assess in broad terms if Occam's window is a suitable method to explore the model space, specifically in the context of graphical models. To this end we developed an Occam's window implementation, and conducted a simulation study exploring how the algorithm performs under different conditions and how it compared to other alternative model search techniques. Our results show that in its current form, our algorithm underperforms compared to the alternatives We discuss potential avenues for improving its performance, but it is not clear whether it might be worth to develop it further.
+#+LATEX_HEADER: The goal of this project was to assess in broad terms if Occam's window is a suitable method to explore the model space, specifically in the context of graphical models. To this end we developed an Occam's window implementation, and conducted a simulation study exploring how the algorithm performs under different conditions and how it compared to other alternative model search techniques. Our results show that in its current form, our algorithm underperforms compared to the alternatives. We discuss potential avenues for improving its performance, but it is not clear whether it might be worth to develop it further.
 #+LATEX_HEADER: }
 
 #+LATEX_HEADER: \keywords{Bayesian inference, Bayesian model averaging, model selection, Occam's window, Gaussian graphical model}
-
-# 
-# Presentation abstract 
-# When we use a statistical model to make inferences we often ignore the uncertainty derived from the model selection process, which can lead to overconfident inferences. Bayesian model averaging allows us to combine the uncertainty of multiple models to make inferences, but it requires a set of candidate models to consider. Exploring the space of possible models is difficult without strong theoretical justifications, and it is specially hard when the model space grows exponentially as the number of variables increases. This is the case with network models such as the Gaussian graphical model.
-
-# Occam's window is a model search algorithm that generates a list of candidate models, and it was designed with Bayesian model averaging in mind. During my thesis I have develop a general implementation of Occam's window that works with any statistical model, and I have conducted a simulation study to benchmark its performance with Gaussian graphical models.
 
 #+LATEX_HEADER: \shorttitle{Occam's Window}
 
@@ -59,7 +53,7 @@ To his end, we have developed an implementation of Occam's window that can work 
 Specifically, we were motivated by the issue of deciding whether to include or not particular edges in graphical models that are popular in psychology. The number of possible graphical models grows exponentially with the number of variables, and current approaches to multi-model inference struggle because of the size of the model space.
 
 Different Bayesian solutions have been proposed that allow us to model the uncertainty of the model selection process, which can be categorized into two groups.
-The first group is using mixture models that encompass all possible models. To estimate the joint posterior distribution of all possible models researchers usually employ simulation based methods like Markov chain Monte Carlo model composition \parencite[MC^3,][]{madigan1995mc3} or reversible jump Markov chain Monte Carlo [[parencite:&green1995rjmcmc]].
+The first group is using mixture models that encompass all possible models. To estimate the joint posterior distribution of all possible models researchers usually employ simulation based methods like Markov chain Monte Carlo model composition \parencite[MC^3,][]{madigan1995mc3} or reversible jump Markov chain Monte Carlo [[parencite:&green1995rjmcmc]]. These algorithms explore the joint posterior distribution by drawing samples from the space of all possible parameter values of all possible models.
 However, it is often impossible to implement simulation based methods that produce good results in realistic time frames, and they tend to have stability issues
 [[parencite:&yao2018bayesianstacking]].
 The second group of approaches to multi-model inference is to only combine the information from a set of pre-specified candidate models \(\mathcal A\), instead of using the whole model space. To combine a set of candidate models we can use Bayesian model averaging
@@ -74,9 +68,12 @@ p(\Delta | D) = \sum_{\forall M_k \in \mathcal A} p(\Delta| \mathcal{M}_k, D) p(
 \end{equation*}
 For example, the posterior probability that a specific parameter is included in a model becomes the sum of the posterior probabilities of all models that include that parameter.
 
-From Bayes theorem we know that the posterior probability of a model is the product of the prior probability of that model \(p(M_k)\) times the marginal likelihood of the data under that model \(p(D|M_k)\), divided by the sum of that same product for all candidate models \[
-p(M _k | D) = \frac{p(D | \mathcal	M_k) p(M_k)}{\sum_{\forall M_l \in \mathcal A}^{} p(D| M_l) p(M_l)} \text{.}\] Note, that if we assume a uniform prior across the model space, the posterior model probabilities become proportional to their marginal likelihoods.
-And, to calculate the marginal likelihoods we need to integrate the product of the likelihood function of each model \(p(D | \theta_k, M_k)\) and the prior distribution of the model parameters \(p(\theta_k | M_k)\) over the whole parameter space
+From Bayes theorem we know that the posterior probability of a model is the product of the prior probability of that model \(p(M_k)\) times the marginal likelihood of the data under that model \(p(D|M_k)\), divided by the total probability of the data \(p(D)\).
+Moreover, the total probability of the data \(p(D)\) is the weighted sum of the marginal probability of the data under each model (the likelihood of the data, \(p(D|M_k)\)), using the prior probability of each model \(p(M_k)\) as weights.
+The full expression for the posterior probability of a model becomes:
+ \[
+p(M _k | D) = \frac{p(D |	M_k) p(M_k)}{\sum_{\forall M_l \in \mathcal A}^{} p(D| M_l) p(M_l)} \text{.}\] Note, that if we assume a uniform prior across the model space, the posterior model probabilities become proportional to their marginal likelihoods.
+And, to calculate the marginal likelihoods we need to integrate the product of the likelihood function of each model \(p(D | \theta_k, M_k)\) and the prior distribution of the model parameters \(p(\theta_k | M_k)\) over the whole parameter space of that model:
 \[
 p(D | M_k) = \int_{}^{} p(D | \theta_k, M_k) p(\theta_k | M_k) d\theta_k \text{.}
 \]
@@ -96,17 +93,19 @@ Formally, the first step equals constructing the set of models\[
 \mathcal A' = \left \{ M_k : \log	 \frac{\max \left[p(M_{l} | D)\right]}{p(M _k | D)} \leq O_L\right	\}
 \]
 with posterior probabilities \(p(M_k | D)\) not significantly lower 
-than that of the model with highest posterior probability \(M_l \in \mathcal A '\). The constant \(O_L\) specifies the range of posterior probabilities that are acceptable, the size of the window of models that fit well enough.
-For the second step, the algorithm identifies the set of models \[
+than that of the model with highest posterior probability \(M_l \in \mathcal A '\). The constant \(O_L\) specifies the range of posterior probabilities that are acceptable, the size of the window of models that fit well enough. Under the special case when \(O_L = 1\), \(\mathcal A '\) would only include the single model with greatest posterior probability.
+For the second step, the algorithm identifies a set of models to discard from \(\mathcal A'\): \[
 \mathcal B = \left\{ M_k : \exists M_l \in \mathcal A',
  M_l \subset M_k,
 \log \frac{p(M_l | D)}{p(M_k | D)}	> O_R
  \right\} 
  \]
 that have at least one submodel \(M_l\) in \(\mathcal A'\) with significantly greater posterior probability, and the range of acceptable differences is controlled by the constant \(O_R\). 
+Under the special case when \(O_R = 1\), \(\mathcal B\) would include all models that have a simpler submodel with higher posterior probability, which implies that in the final set of candidate models there would not be any model that is a submodel of  other included model.
 The final set of candidate models is the set of models in the first set that are not present in the second \(\mathcal A = \mathcal A' \setminus \mathcal B\). That is, the set of models that fit the data reasonably well and that do not have simpler counterparts that fit the data well enough.
 
-Both constants, \(O_L\) and \(O_R\), determine the size of the window---hence the name of the algorithm---of acceptable posterior probabilities to consider, depicted in Figure ref:fig:window. When the ratio of posterior probabilities lies inside the window, both the simpler and the more complex models are included in \(\mathcal A\).
+Both constants, \(O_L\) and \(O_R\), determine the size of the window---hence the name of the algorithm---of acceptable posterior probabilities to consider, depicted in Figure ref:fig:window. For any pair of models \(M\) and \(M_0\), where \(M_0\) is a submodel of \(M\), we would expect the set of candidate models \(\mathcal A\) to include either of them, or both of them, depending on the ratio of their posterior probabilities.
+When the ratio of posterior probabilities lies inside the window, both \(M\) and \(M_0\) are included in \(\mathcal A\).
 
 \begin{figure}[H]
 	\centering
@@ -182,7 +181,7 @@ The second algorithm \parencites{raftery1995bms}{raftery1997bmalinear}, Algorith
 Therefore, we have to use another method to generate \(\mathcal C\), and then the algorithm eliminates models from that set. The R package BMA uses a leaps-and-bounds algorithm [[parencite:&furnival1974leaps]] to generate \(\mathcal C\). The leaps-and-bounds is extremely performant in the linear regression case (less than six floating point operations per model), because it re-uses most calculations across models.
  
 	\begin{algorithm}[H]
-		\caption{Occam's window as implemented in BMA.}
+		\caption{Occam's window as implemented in BMA. An immediate submodel \(M_0\) means that the model differ from the original model \(M\) by a single parameter.}
 		\label{algo:bma}
 		\begin{algorithmic}[1]
 			\REQUIRE $\mathcal C$
@@ -208,7 +207,7 @@ Therefore, we have to use another method to generate \(\mathcal C\), and then th
 	\end{algorithm}
 
 Lastly, there is a third algorithm,
-an extension of Occam's window that allows to perform BMA on streams of data that become available sequentially [[parencite:&onorante2016dynamicow]].
+an extension of Occam's window that allows to perform BMA on streams of data that become available sequentially [[parencite:&onorante2016dynamicow]], but dealing with streams of data is not relevant for our goals, so we have not considered this algorithm in this project.
 
 ** Marginal likelihood approximations
 
@@ -230,7 +229,7 @@ which means that \[
 2 \log B_i_j = - \text{BIC}(M_i) + \text{BIC}(M_j) \text{.}
 \]
 This is the approach used by the BMA R package [[parencite:&raftery2015bma]].
-Bridge sampling offers another approach to approximate the marginal likelihood [[parencite:&gronau2017bridge;&bennett1976bridge]]. Bridge sampling generally provides accurate approximations of marginal likelihoods, but is also very computationally demanding and not usable with a model search algorithm, because it is a simulation based method and has to draw samples.
+Bridge sampling offers another approach to approximate the marginal likelihood [[parencite:&gronau2017bridge;&bennett1976bridge]]. Bridge sampling generally provides accurate approximations of marginal likelihoods, but is also computationally demanding and not usable with a model search algorithm that has to calculate (at least) thousands of marginal likelihoods. This is the case because it is a simulation based method that works drawing samples from the posterior distribution of the parameters of each model, and it requires a high number of samples to accurately estimate the marginal likelihood.
 A method between BIC and bridge sampling in terms of accuracy and computational demands is the Laplace approximation [[parencite:&lecam1953some;&kass1995bayesfactors]]. This method approximates the posterior distribution with a normal distribution centered around the posterior mode, which can be estimated using expectation-maximization algorithms. The standard Laplace approximation is accurate to the second moment of the posterior distribution, but it is possible to extend it to get more accurate approximations at the cost of more computational resources or further assumptions [[parencite:&ruli2016improvedlaplace;&rue2009inla;&hubin2016inla;&tierney1989laplace;&tierney1986accurate]].
 Lastly, for some models, depending on the prior choices there are analytical solutions of the marginal likelihood.
 Also, note that in the context of Occam's window and BMA, it is possible to use a faster but less accurate approximation during model search, and use a slower but more accurate approximation during the BMA step.
@@ -281,7 +280,8 @@ The goal of the simulation study was to assess in broad terms whether	 Occam's w
 *** Data generation
 The simulation study is divided in two parts, simulations for linear regression models and for GGMs.
 
-We used a 4-way design for the linear regression simulations with 3x3x3x6 conditions. The possible number of total variables were \( \left\{5, 10, 20	 \right\} \), the number of observations per variable \( \left\{ 10, 20, 100 \right\}\) and the proportion of the total variables used in the data generating models \( \left\{ 1/4, 1/2, 1 \right\}\). For each simulation condition, we generated data drawing predictor samples from a normal distribution with \(\mu = 0\)	and \(\sigma = 1\), drawing regression parameters from a normal distribution with \(\mu = 0\)	 and \(\sigma = 10\), and adding normal noise to the dependent variables with \(\mu = 0\)	 and \(\sigma = 1\). 
+We used a 4-way design for the linear regression simulations with 3x3x3x6 conditions. The possible number of total variables were \( \left\{5, 10, 20	 \right\} \), the number of observations per variable \( \left\{ 10, 20, 100 \right\}\) and the proportion of the total variables used in the data-generating models \(\left\{ 1/4, 1/2, 1 \right\}\). If we ended up with a fractional number we rounded it to the lowest integer. For example, if the number of total variables in the simulated data set was \(10\) and the proportion of total variables was \(1/4\), the true data-generating model used 2 variables.
+For each simulation condition, we generated data drawing predictor samples from a normal distribution with \(\mu = 0\)	and \(\sigma = 1\), drawing regression parameters from a normal distribution with \(\mu = 0\)	 and \(\sigma = 10\), and adding normal noise to the dependent variables with \(\mu = 0\)	 and \(\sigma = 1\). 
 
 For each simulated dataset, we used the R package BAS, the R package BMA and our Occam's window implementation. The R package BMA uses default values \(O_R = \log(20)\) and \(O_L = 1\) during Occam's window, but we noticed during the development of our implementation that sometimes we would obtain better results with both constants being one. This implies that the /window/ of Occam's window collapses and that the algorithm becomes a simple greedy search that just selects the model with higher posterior probability at every comparison. To assess this, we did run our implementation with both sets of constants. Additionally, the R package BMA uses leaps-and-bounds to generate a model set that they use as a proxy of the whole model space, and we also wanted to compare how using this set of initial candidate models \(\mathcal C\) impacts Algorithm ref:algo:occams performance versus using a single saturated model as recommended by [[textcite:&madigan1994occamsgraphical]].
 In total, this leaves us with 6 different model specifications, which are depicted in Table ref:table:models.
@@ -388,12 +388,12 @@ On the other hand, when considering execution time, the differences across the t
 The goal of this thesis project was to asses whether Occam's window is a potentially useful algorithm to explore the space of possible models, specially in the case of graphical models.
 Our results show that, at least for now, our implementation of Occam's window is not capable of matching the performance of alternative algorithms. Neither in terms of accuracy of the results nor in terms of computational speed. Our implementation runs in an acceptable time frame when dealing with linear regression models, but its performance is worse than the alternatives. In the case of GGMs the performance of our implementation was closer to that of the alternatives, albeit still significantly underperforming, but it took a prohibitively amount of time to execute.
 
-The algorithms we have benchmarked our implementation against, BGGM and BDgraph, work very well when dealing with simple cases (i.e. continuous, normally distributed data), but their performance is not as good under more complex conditions. These method are essentially as optimized as they can be, while our implementation is still very bare-bones. In this sense, Occam's window still has the potential of outperforming the alternatives in more complex scenarios. There are two main avenues for improving the performance of our implementation. 
+The algorithms we have benchmarked our implementation against, BGGM and BDgraph, work very well when dealing with simple cases (i.e. continuous, normally distributed data), but their performance is not as good under more complex conditions. These method are essentially as optimized as they can be, while our implementation is still very bare-bones. In this sense, Occam's window still has the potential of outperforming the alternatives in more complex scenarios. There are two main avenues for improving the performance of our implementation that we think have the most potential. 
 The first one, would be to implement a method of calculating the marginal likelihoods that allows to re-use computations across different models, to improve its execution speed. The standard way of obtaining the maximum likelihood estimates required to calculate the BIC in the case of the GGMs is to use estimation-maximization methods, which make it difficult to re-use computations across models. We could instead use pseudolikelihoods functions like those proposed in [[textcite:&pensar2017marginalpseudo]] or [[textcite:&mohammadi2017accelarating]], for which deriving sequential calculations might be possible. 
 The second avenue to improve Occam's window performance is to use a method to find a good set of initial candidate models. One of the keys of the excellent performance of the  BMA R package is the quality of the set of initial candidate models generated by the leaps-and-bounds algorithm. In our simulations with GGMs we just used a single saturated model as a starting point, and using a better set of initial models might significantly improve Occam's window performance---although that was not always the case in our linear regression results. If the quality of the initial set was good enough to act as a proxy of the full model space, it would even be an option to use Algorithm ref:algo:bma instead of Algorithm ref:algo:occams.
 A potential method of reducing the model space that Occam's window has to explore is the approach proposed by textcite:&marsman2022rbinnbet, which allows to discard edges from the total set of possible edges in graphical models. However, although this approach will limit the space of models to explore, it will not necessarily help in finding a set of good initial candidate models from that reduced model space.
 
-Our results do not show that Occam's window is a very promising method, but they do not show either that it has to be an impractical algorithm to use with graphical models.
+Our results do not show that Occam's window is a very promising method, but they do not show either that it is clearly an impractical algorithm to use with graphical models.
 Whether it is worth pursuing the development of an implementation of Occam's window for graphical models is not a question that we can answer in absolute terms. It depends on our personal trade-offs between the perceive importance of the issue of variable selection in graphical models, and the potential increase in performance versus alternative approaches. 
 
 * Materials
